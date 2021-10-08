@@ -6,7 +6,7 @@
 //  Facultad de Informática
 //  Universidad Complutense de Madrid
 //
-//  Copyright (c) 2015-2020  Alberto Verdejo
+//  Copyright (c) 2020  Alberto Verdejo
 //
 
 #ifndef GRAFO_H_
@@ -23,13 +23,27 @@ class Grafo {
 private:
     int _V;  // número de vértices
     int _A;  // número de aristas
-    std::vector<std::vector<bool>> _ady;  // matriz de adyacencia
+    std::vector<Adys> _ady;  // vector de listas de adyacentes
 public:
 
     /**
      * Crea un grafo con V vértices.
      */
-    Grafo(int V) : _V(V), _A(0), _ady(_V, std::vector<bool>(_V, false)) {}
+    Grafo(int V) : _V(V), _A(0), _ady(_V) {}
+
+    /**
+     * Crea un grafo a partir de los datos en el flujo de entrada.
+     */
+    Grafo(std::istream& flujo) : _A(0) {
+        flujo >> _V;
+        _ady.resize(_V);
+        int E, v, w;
+        flujo >> E;
+        while (E--) {
+            flujo >> v >> w;
+            ponArista(v, w);
+        }
+    }
 
     /**
      * Devuelve el número de vértices del grafo.
@@ -49,30 +63,49 @@ public:
         if (v < 0 || v >= _V || w < 0 || w >= _V)
             throw std::domain_error("Vertice inexistente");
         ++_A;
-        _ady[v][w] = _ady[w][v] = true;
+        _ady[v].push_back(w);
+        _ady[w].push_back(v);
     }
 
     bool hayArista(int v, int w) const {
         if (v < 0 || v >= _V || w < 0 || w >= _V)
             throw std::domain_error("Vertice inexistente");
-        return _ady[v][w];
+        for (auto u : _ady[v])
+            if (u == w) return true;
+        return false;
     }
 
     /**
      * Devuelve la lista de adyacencia de v.
      * @throws domain_error si v no existe
      */
-    Adys ady(int v) const {
+    Adys const& ady(int v) const {
         if (v < 0 || v >= _V)
             throw std::domain_error("Vertice inexistente");
-        Adys res;
-        for (int i = 0; i < _V; ++i) {
-            if (_ady[v][i])
-                res.push_back(i);
-        }
-        return res;
+        return _ady[v];
     }
 
+    /**
+     * Muestra el grafo en el stream de salida o (para depurar)
+     */
+    void print(std::ostream& o = std::cout) const {
+        o << _V << " vértices, " << _A << " aristas\n";
+        for (int v = 0; v < _V; ++v) {
+            o << v << ": ";
+            for (int w : _ady[v]) {
+                o << w << " ";
+            }
+            o << "\n";
+        }
+    }
 };
+
+/**
+ * Para mostrar grafos por la salida estándar
+ */
+inline std::ostream& operator<<(std::ostream& o, Grafo const& g) {
+    g.print(o);
+    return o;
+}
 
 #endif /* GRAFO_H_ */

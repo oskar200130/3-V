@@ -34,7 +34,8 @@ private:
 		visit[v] = true;
 		for (int w : G.ady(v)) {
 			if (!visit[w]) {
-				if (w < per) vis++;
+				if (w < per) 
+					vis++;
 				dfs(G, w);
 			}
 		}
@@ -56,7 +57,7 @@ bool resuelveCaso() {
 		return false;
 	cin >> g;
 
-	Grafo* gr = new Grafo(p + g);
+	Grafo gr(p + g);
 
 	for (int i = 0; i < g; i++) {
 		int v;
@@ -66,14 +67,14 @@ bool resuelveCaso() {
 			cin >> x;
 			if (x == 1)
 				cout << "";
-			gr->ponArista(--x, p + i);
+			gr.ponArista(--x, p + i);
 		}
 	}
 	// resolver el caso posiblemente llamando a otras funciones
 
 	for (int i = 0; i < p; i++) {
-		CaminosDFS* c = new CaminosDFS(*gr, i, p);
-		cout << c->getNumVis() << " ";
+		CaminosDFS c(gr, i, p);
+		cout << c.getNumVis() << " ";
 	}
 	cout << "\n";
 	// escribir la solución

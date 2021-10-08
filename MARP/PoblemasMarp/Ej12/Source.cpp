@@ -56,14 +56,14 @@ void resuelveCaso() {
 	cin >> v >> a;
 	// leer los datos de la entrada
 
-	Grafo* gr = new Grafo(v);
+	Grafo gr(v);
 	for (int i = 0; i < a; i++) {
 		int x, y;
 		cin >> x >> y;
-		gr->ponArista(--x, --y);
+		gr.ponArista(--x, --y);
 	}
 	// resolver el caso posiblemente llamando a otras funciones
-	MaximaCompConexa m(*gr);
+	MaximaCompConexa m(gr);
 	cout << m.maximo() << "\n";
 	// escribir la solución
 }
