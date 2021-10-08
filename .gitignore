@@ -386,5 +386,6 @@ FodyWeavers.xsd
 # JetBrains Rider
 .idea/
 *.sln.iml
-#SSOO_2021_Lubuntu.ova
 SSOO_2021_Lubuntu.ova
+common
+bin

@@ -31,8 +31,11 @@ std::vector<Particle*> particles;
 
 void initObjects() {
 	PxTransform p = GetCamera()->getTransform();
-	Vector3 dir = GetCamera()->getDir();
-	particles.push_back(new Particle(p, dir * 50, { 0,-9.8,0 }, { 1,1,0,1 }, 0.7));
+	p.p+=Vector3(-200, 10, -200);
+	int max = 200;
+	int min = 150;
+	Vector3 dir = Vector3{ (float)(rand() % max + min)/100,  (float)(rand() % max + min) / 100, (float)(rand() % max + min) / 100 };
+	particles.push_back(new Particle(p, dir * 50, { 0,-10,0 }, { 1,1,0,1 }, 0.7));
 }
 // Initialize physics engine
 void initPhysics(bool interactive)
@@ -67,7 +70,7 @@ void initPhysics(bool interactive)
 void stepPhysics(bool interactive, double t)
 {
 	PX_UNUSED(interactive);
-
+	initObjects();
 	gScene->simulate(t);
 	gScene->fetchResults(true);
 	for (Particle* p : particles) {
