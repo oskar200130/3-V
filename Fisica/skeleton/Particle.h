@@ -52,8 +52,10 @@ class FireWork : public Particle {
 private:
 	FireWorkType type;
 	float age;
+	bool active = true;
 public:
 	FireWork(FireWorkType t) : Particle(), type(t), age(0) {};
+	~FireWork() {};
 	bool update(float t) {
 		integrate(t);
 
@@ -61,6 +63,8 @@ public:
 		return age < 0;
 	}
 	inline void setAge(int a) { age = a; };
+	inline void setInactive() { active = false; };
+	inline bool isActive() const { return active; };
 };
 
 struct FireWorkRule {
@@ -108,12 +112,12 @@ struct FireWorkRule {
 	}
 
 	void update(float t) {
-		for (auto fireW = fires.begin(); fireW != fires.end(); fireW++) {
-			FireWork* f = *fireW;
-			if (f->update(t)) {
+		for (FireWork* fireW : fires) {
+			if (fireW->update(t)) {
 				for (int i = 0; i < children; i++) 
-					create(f->getPosition().p,f);
-				delete f;
+					create(fireW->getPosition().p,fireW);
+				delete fireW;
+				fires.erase(std::remove(fires.begin(), fires.end(), fireW), fires.end());
 			}
 		}
 	}

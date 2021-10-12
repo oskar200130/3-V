@@ -42,8 +42,8 @@ void initObjects() {
 	FireWorkRule* f = new FireWorkRule;
 	f->color = Vector4(0, 1, 1, 1);
 	f->damping = 0.999;
-	f->maxAge = 20;
-	f->minAge = 15;
+	f->maxAge = 10;
+	f->minAge = 5;
 	f->maxVelocity = Vector3(20, 50, 1);
 	f->minVelocity = Vector3(20, 50, 2);
 	f->set(FireWorkType::fire, 3, 4);
