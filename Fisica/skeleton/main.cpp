@@ -27,15 +27,28 @@ PxDefaultCpuDispatcher* gDispatcher = NULL;
 PxScene* gScene = NULL;
 ContactReportCallback gContactReportCallback;
 
-std::vector<Particle*> particles;
+std::vector<FireWorkRule*> particles;
 
 void initObjects() {
-	PxTransform p = GetCamera()->getTransform();
+	/*PxTransform p = GetCamera()->getTransform();
 	p.p+=Vector3(-200, 10, -200);
 	int max = 200;
 	int min = 150;
 	Vector3 dir = Vector3{ (float)(rand() % max + min)/100,  (float)(rand() % max + min) / 100, (float)(rand() % max + min) / 100 };
-	particles.push_back(new Particle(p, dir * 50, { 0,-10,0 }, { 1,1,0,1 }, 0.7));
+	particles.push_back(new Particle(p, dir * 50, { 0,-10,0 }, { 1,1,0,1 }, 0.7));*/
+
+	PxTransform p = GetCamera()->getTransform();
+	p.p += Vector3(-200, 10, -200);
+	FireWorkRule* f = new FireWorkRule;
+	f->color = Vector4(0, 1, 1, 1);
+	f->damping = 0.999;
+	f->maxAge = 20;
+	f->minAge = 15;
+	f->maxVelocity = Vector3(20, 50, 1);
+	f->minVelocity = Vector3(20, 50, 2);
+	f->set(FireWorkType::fire, 3, 4);
+	f->create(p.p);
+	particles.push_back(f);
 }
 // Initialize physics engine
 void initPhysics(bool interactive)
@@ -70,14 +83,12 @@ void initPhysics(bool interactive)
 void stepPhysics(bool interactive, double t)
 {
 	PX_UNUSED(interactive);
-	initObjects();
+	//initObjects();
 	gScene->simulate(t);
 	gScene->fetchResults(true);
-	for (Particle* p : particles) {
-		if (p->isActive()) {
+	for (FireWorkRule* p : particles) {
+		if (p->count!=-1) {
 			p->update(t);
-			if (p->getY() < 10)
-				p->setInactive();
 		}
 		else {
 			delete p;

@@ -5,7 +5,7 @@ Particle::~Particle() {
 	renderItem = nullptr;
 }
 
-void Particle::update(double t) {
+void Particle::integrate(double t) {
 
 	if (in_mas <= 0.0f) return;
 	// Update position
