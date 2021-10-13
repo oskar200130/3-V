@@ -42,11 +42,11 @@ void initObjects() {
 	FireWorkRule* f = new FireWorkRule;
 	f->color = Vector4(0, 1, 1, 1);
 	f->damping = 0.999;
-	f->maxAge = 10;
-	f->minAge = 5;
-	f->maxVelocity = Vector3(20, 50, 1);
-	f->minVelocity = Vector3(20, 50, 2);
-	f->set(FireWorkType::fire, 3, 4);
+	f->maxAge = 3;
+	f->minAge = 1;
+	f->maxVelocity = Vector3(1, 14, 1);
+	f->minVelocity = Vector3(2, 14, 2);
+	f->set(FireWorkType::fire, 3, 2);
 	f->create(p.p);
 	particles.push_back(f);
 }
@@ -87,7 +87,7 @@ void stepPhysics(bool interactive, double t)
 	gScene->simulate(t);
 	gScene->fetchResults(true);
 	for (FireWorkRule* p : particles) {
-		if (p->count!=-1) {
+		if (p->fires.size()>0) {
 			p->update(t);
 		}
 		else {

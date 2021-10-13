@@ -1,7 +1,7 @@
 #include "Particle.h"
 
 Particle::~Particle() {
-	RegisterRenderItem(renderItem);
+	DeregisterRenderItem(renderItem);
 	renderItem = nullptr;
 }
 
