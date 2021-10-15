@@ -10,6 +10,7 @@
 using namespace std;
 
 #include "Digrafo.h"    // propios o los de las estructuras de datos de clase
+#include <queue>
 
 /*@ <answer>
 
@@ -27,27 +28,38 @@ using namespace std;
 class CaminoMenor {
 private:
 	vector<bool> visit;
-	int min, act;
+	vector<int> ant;
+	vector<int> dist;
+	int ini, k;
 public:
-	CaminoMenor(const Digrafo& g, int v) : visit(v, false), min(v + 1), act(0) {
-		dfs(g, 0);
+	CaminoMenor(const Digrafo& g, int v, int K) : visit(g.V(), false), ant(g.V()), ini(v), dist(g.V(), 0), k(K) {
+		bfs(g);
 	}
 
-	void dfs(const Digrafo& g, int v) {
-		visit[v] = true;
-		act++;
-		if (act < min) {
+	void bfs(const Digrafo& g) {
+		std::queue<int> q;
+ 		visit[ini] = true;
+		q.push(ini);
+
+
+		while (!q.empty()) {
+			int v = q.front();
+			q.pop();
+			int i = 0;
 			for (int w : g.ady(v)) {
-				if (w == (visit.size()-1)) 
-					min = act;
-				else if (!visit[w])
-					dfs(g, w);
+				i++;
+				if (!visit[w]) {
+					visit[w] = true;
+					dist[w] = dist[v];
+					if (i <= k)
+						dist[w]++;
+					q.push(w);
+				}
+				if (w == g.V() - 1) return;
 			}
 		}
-		visit[v] = false;
-		act--;
 	}
-	int getMin() { return min; };
+	int getMin() { return dist[dist.size() - 1]; };
 };
 
 bool resuelveCaso() {
@@ -59,19 +71,19 @@ bool resuelveCaso() {
 		return false;
 
 	Digrafo g(n * n);
-	for (int i = 0; i < n*n; i++) {
-		for (int j = 0; j < k; j++) {
-			if (j < n*n) g.ponArista(i, j);
+	for (int i = 0; i < n * n; i++) {
+		for (int j = 1; j <= k; j++) {
+			if (j + i < n * n) g.ponArista(i, j + i);
 		}
 	}
 
 	int x, y;
 	for (int i = 0; i < s + e; i++) {
 		cin >> x >> y;
-		g.ponArista(--x, --y);
+		if (x < n * n && y < n * n)g.ponArista(--x, --y);
 	}
 	// resolver el caso posiblemente llamando a otras funciones
-	CaminoMenor m(g, n * n);
+	CaminoMenor m(g, 0, k);
 	cout << m.getMin() << "\n";
 	// escribir la solución
 
