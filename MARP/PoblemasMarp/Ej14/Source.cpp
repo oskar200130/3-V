@@ -8,7 +8,7 @@
 #include <fstream>
 using namespace std;
 
-#include "Grafos.cpp"
+#include "Grafo.h"
 
 /*@ <answer>
 
@@ -25,27 +25,32 @@ using namespace std;
  //@ <answer>
 class CaminosDFS {
 private:
-	std::vector<bool> visit; // visit[v] = ¿hay camino de s a v?
-	//std::vector<int> ant; // ant[v] = último vértice antes de llegar a v
-	int s; // vértice origen
-	int vis;
-	int per;
-	void dfs(Grafo const& G, int v) {
+	vector<bool> visit; // visit[v] = ¿hay camino de s a v?
+	vector<int> componente; // ant[v] = último vértice antes de llegar a v
+
+	vector<int> tam_comp;
+
+	int dfs(Grafo const& G, int v) {
 		visit[v] = true;
+		componente[v] = tam_comp.size();
+		int tam = 1;
 		for (int w : G.ady(v)) {
 			if (!visit[w]) {
-				if (w < per) 
-					vis++;
-				dfs(G, w);
+				tam += dfs(G, w);
+			}
+		}
+		return tam;
+	}
+public:
+	CaminosDFS(Grafo const& g) : visit(g.V(), false), componente(g.V()) {
+		for (int v = 0; v < g.V(); v++) {
+			if (!visit[v]) {
+				int tam = dfs(g, v);
+				tam_comp.push_back(tam);
 			}
 		}
 	}
-public:
-	CaminosDFS(Grafo const& g, int s, int p) : visit(g.V(), false),
-		s(s), vis(1), per(p) {
-		dfs(g, s);
-	}
-	inline int getNumVis() const { return vis; }
+	inline int tam_comv(int v) { return tam_comp[componente[v]]; };
 };
 
 bool resuelveCaso() {
@@ -57,24 +62,27 @@ bool resuelveCaso() {
 		return false;
 	cin >> g;
 
-	Grafo gr(p + g);
+	Grafo gr(p);
 
 	for (int i = 0; i < g; i++) {
 		int v;
 		cin >> v;
-		for (int j = 0; j < v; j++) {
-			int x;
+		if (v > 0) {
+			int x, y;
 			cin >> x;
-			if (x == 1)
-				cout << "";
-			gr.ponArista(--x, p + i);
+
+			for (int j = 1; j < v; j++) {
+				cin >> y;
+				gr.ponArista(x - 1, y - 1);
+				x = y;
+			}
 		}
 	}
 	// resolver el caso posiblemente llamando a otras funciones
 
+	CaminosDFS c(gr);
 	for (int i = 0; i < p; i++) {
-		CaminosDFS c(gr, i, p);
-		cout << c.getNumVis() << " ";
+		cout << c.tam_comv(i) << " ";
 	}
 	cout << "\n";
 	// escribir la solución

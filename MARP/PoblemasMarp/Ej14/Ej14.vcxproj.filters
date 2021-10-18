@@ -18,7 +18,7 @@
     <ClCompile Include="Source.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
-    <ClCompile Include="Grafos.cpp">
+    <ClCompile Include="Grafo.h">
       <Filter>Archivos de recursos</Filter>
     </ClCompile>
   </ItemGroup>
