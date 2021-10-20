@@ -41,14 +41,7 @@ public:
 		for (int i = 0; i < mapa.size(); i++) {
 			for (int j = 0; j < colum; j++) {
 				if (mapa[i][j] == '#') {
-					for (auto a : dir) {
-						int x = i + a.first;
-						int y = j + a.second;
-						if (x > 0 && x < mapa.size() && y>0 && y < colum && mapa[x][y] == '#') {
-							cd.unir(i * colum + j, x * colum + y);
-							if (cd.cardinal(i * colum + j) > max) max = cd.cardinal(i * colum + j);
-						}
-					}
+					addMancha(mapa, i, j);
 				}
 			}
 		}
@@ -58,7 +51,7 @@ public:
 		for (auto a : dir) {
 			int x2 = x + a.first;
 			int y2 = y + a.second;
-			if (x2 > 0 && x2 < m.size() && y2>0 && y2 < colum && m[x2][y2] == '#') {
+			if (x2 >= 0 && x2 < m.size() && y2 >= 0 && y2 < colum && m[x2][y2] == '#' && !cd.unidos(x * colum + y, x2 * colum + y2)) {
 				cd.unir(x * colum + y, x2 * colum + y2);
 				if (cd.cardinal(x * colum + y) > max) max = cd.cardinal(x * colum + y);
 			}

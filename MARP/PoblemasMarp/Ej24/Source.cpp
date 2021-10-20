@@ -33,7 +33,7 @@ class ARM_Kruskal {
 private:
     std::vector<Arista<Valor>> _ARM;
     Valor coste;
-    bool conexo;
+    bool conected;
 public:
     Valor costeARM() const {
         return coste;
@@ -41,9 +41,9 @@ public:
     std::vector<Arista<Valor>> const& ARM() const {
         return _ARM;
     }
-    bool isConexo() const { return conexo; };
+    bool isConexo() const { return conected; };
 
-    ARM_Kruskal(GrafoValorado<Valor> const& g) : coste(0), conexo(false) {
+    ARM_Kruskal(GrafoValorado<Valor> const& g) : coste(0), conected(false) {
         PriorityQueue<Arista<Valor>> pq(g.aristas());
         ConjuntosDisjuntos cjtos(g.V());
         while (!pq.empty()) {
@@ -55,7 +55,7 @@ public:
                 if (_ARM.size() == g.V() - 1) break;
             }
         }
-        if (cjtos.num_cjtos() == 1) conexo = true;
+        if (cjtos.num_cjtos() == 1) conected = true;
     }
 };
 
