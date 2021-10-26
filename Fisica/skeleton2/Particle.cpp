@@ -20,11 +20,24 @@ void Particle::integrate(double t) {
 	if (in_mas <= 0.0f) return;
 	// Update position
 	pos.p += vel * t;
+
+	Vector3 totalAcceleration = a;
+	totalAcceleration += force * in_mas;
+
 	// Update linear velocity
-	vel += a * t;
+	vel += totalAcceleration * t;
 	// Impose drag (damping)
 	vel *= powf(damping, t);
 
+	clearForce();
+}
+
+void Particle::clearForce(){
+	force.clear();
+}
+
+void Particle::addForce(const Vector3& f){
+	force += f;
 }
 
 //--------------------------------------------------------------------------------------------

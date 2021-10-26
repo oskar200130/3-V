@@ -19,6 +19,8 @@ private:
 	bool active = true;
 
 	RenderItem* renderItem;
+	// Accumulated force
+	Vector3 force;
 
 public:
 	Particle() :pos(0, 0, 0), vel(0), a(0), color({ 0,0,0,1 }), damping(0), in_mas(0.1) { };
@@ -28,6 +30,11 @@ public:
 	void init(Vector3 p, Vector3 v, Vector3 ac, Vector4 c = { 1,1,1,1 }, float dam = 0.999, float in_m = 5.0, float size = 2.0);
 	~Particle();
 	void integrate(double t);
+
+	// Clears accumulated force
+	void clearForce();
+	// Add force to apply in next integration only
+	void addForce(const Vector3& f);
 
 	inline PxTransform getPosition() const { return pos; };
 	inline Vector3 getVel() const { return vel; };
