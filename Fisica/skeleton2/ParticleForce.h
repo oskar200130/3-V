@@ -32,3 +32,16 @@ public:
 	// Update all the generators in the registry
 	void updateForces(float t);
 };
+
+//--------------------------------------------------------------------------------------------
+
+class ParticleGravity : public ParticleForceGenerator
+{
+	// Acceleration for gravity
+	Vector3 g;
+public:
+	ParticleGravity(const Vector3& gravity) : g(gravity) {}
+	virtual void updateForce(Particle* particle, float t);
+};
+
+//--------------------------------------------------------------------------------------------

@@ -37,6 +37,7 @@ public:
 	void addForce(const Vector3& f);
 
 	inline PxTransform getPosition() const { return pos; };
+	inline int getMass() const { return in_mas; };
 	inline Vector3 getVel() const { return vel; };
 	inline bool isActive() const { return active; };
 

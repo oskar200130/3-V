@@ -28,3 +28,10 @@ void ParticleForceRegistry::updateForces(float t){
 		it->fg->updateForce(it->particle, t);
 	}
 }
+
+//--------------------------------------------------------------------------------------------
+
+void ParticleGravity::updateForce(Particle* particle, float t){
+	if (particle->getMass() == 0) return;
+	particle->addForce(g * particle->getMass());
+}
