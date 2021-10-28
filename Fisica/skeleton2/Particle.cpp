@@ -22,7 +22,7 @@ void Particle::integrate(double t) {
 	pos.p += vel * t;
 
 	Vector3 totalAcceleration = a;
-	totalAcceleration += force * in_mas;
+	totalAcceleration += force * (1/in_mas);
 
 	// Update linear velocity
 	vel += totalAcceleration * t;
@@ -32,8 +32,8 @@ void Particle::integrate(double t) {
 	clearForce();
 }
 
-void Particle::clearForce(){
-	force.clear();
+void Particle::clearForce() {
+	force = Vector3(0, 0, 0);
 }
 
 void Particle::addForce(const Vector3& f){
@@ -96,6 +96,10 @@ void FireWorkRule::configType(FireWork* fir, Vector3& vel, float& size, Vector4&
 
 		vel += Vector3(-cos(360.0f / 9.0f * (numH)), sin(360.0f / 9.0f * (numH)), cos(360.0f / 9.0f * (numH)))*div;
 		break;
+	case FireWorkType::particle:
+		color = { 1,0,1,1 };
+		size = fir->expAge + 2.0f;
+		vel = GetCamera()->getDir()*100;
 	}
 }
 
@@ -111,5 +115,5 @@ void FireWorkRule::create(FireWork* fir, Vector3 pos, const FireWork* parent) {
 
 	float s = 0.0;
 	configType(fir, vel, s, color);
-	fir->init(pos, vel, { 0, -10, 0 }, color, damping, 0.1, 3.0f / s);
+	fir->init(pos, vel, { 0, 0, 0 }, color, damping, 0.1, 3.0f / s);
 }

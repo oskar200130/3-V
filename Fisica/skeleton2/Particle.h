@@ -23,8 +23,8 @@ private:
 	Vector3 force;
 
 public:
-	Particle() :pos(0, 0, 0), vel(0), a(0), color({ 0,0,0,1 }), damping(0), in_mas(0.1) { };
-	Particle(PxTransform p, Vector3 v, Vector3 ac, Vector4 c = { 1,1,1,1 }, float dam = 0.999, float in_m = 5.0) :pos(p), vel(v), a(ac), color(c), damping(dam), in_mas(in_m) {
+	Particle() :pos(0, 0, 0), vel(0), a(0), color({ 0,0,0,1 }), damping(0), in_mas(0.1), force(Vector3(0, 0, 0)) { };
+	Particle(PxTransform p, Vector3 v, Vector3 ac, Vector4 c = { 1,1,1,1 }, float dam = 0.999, float in_m = 5.0) :pos(p), vel(v), a(ac), color(c), damping(dam), in_mas(in_m), force(Vector3(0,0,0)) {
 		renderItem = new RenderItem(CreateShape(PxSphereGeometry(2.0)), &pos, color);
 	};
 	void init(Vector3 p, Vector3 v, Vector3 ac, Vector4 c = { 1,1,1,1 }, float dam = 0.999, float in_m = 5.0, float size = 2.0);
@@ -37,7 +37,7 @@ public:
 	void addForce(const Vector3& f);
 
 	inline PxTransform getPosition() const { return pos; };
-	inline int getMass() const { return in_mas; };
+	inline float getMass() const { return in_mas; };
 	inline Vector3 getVel() const { return vel; };
 	inline bool isActive() const { return active; };
 
@@ -46,7 +46,7 @@ public:
 
 //--------------------------------------------------------------------------------------------
 
-enum class FireWorkType { explosion, shoot, fireball };
+enum class FireWorkType { explosion, shoot, fireball, particle };
 
 class FireWork : public Particle {
 public:
