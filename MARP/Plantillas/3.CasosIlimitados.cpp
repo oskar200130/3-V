@@ -30,7 +30,7 @@ bool resuelveCaso() {
    
    // leer los datos de la entrada
    
-   if (!std::cin)  // fin de la entrada
+   if (!cin)  // fin de la entrada
       return false;
    
    // resolver el caso posiblemente llamando a otras funciones
@@ -46,8 +46,8 @@ bool resuelveCaso() {
 int main() {
    // ajustes para que cin extraiga directamente de un fichero
 #ifndef DOMJUDGE
-   std::ifstream in("casos.txt");
-   auto cinbuf = std::cin.rdbuf(in.rdbuf());
+   ifstream in("casos.txt");
+   auto cinbuf = cin.rdbuf(in.rdbuf());
 #endif
    
    while (resuelveCaso());
