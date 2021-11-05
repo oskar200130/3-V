@@ -24,6 +24,11 @@ using namespace std;
  // Escribe el código completo de tu solución aquí debajo
  // ================================================================
  //@ <answer>
+struct Pelicula {
+	int ini;
+	int fin;
+	bool operator<(Pelicula b) { return this->fin < b.fin; };
+};
 
 bool resuelveCaso() {
 
@@ -34,35 +39,32 @@ bool resuelveCaso() {
 	if (n == 0)  // fin de la entrada
 		return false;
 
-	vector<int> horasFin(n);
+	vector<Pelicula> cartelera(n);
 
-	int h, min;
+	int h, min, dur;
 	char c;
 
 	for (int i = 0; i < n; i++) {
-		cin >> h >> c >> min;
-		horasFin[i] = h * 60 + min + 10;
+		Pelicula aux;
+		cin >> h >> c >> min >> dur;
+		aux.ini = h * 60 + min;
+		aux.fin = aux.ini + dur + 10;
+		cartelera[i] = aux;
 	}
 
-	sort(horasFin.begin(), horasFin.end());
+	sort(cartelera.begin(), cartelera.end());
 
 	// resolver el caso posiblemente llamando a otras funciones
-	int eq = n;
-	int eqInd = 0;
-	for (int i = 0; i < n && eqInd < m; i++) {
-		if (jugadores[i] == equipaciones[eqInd] || jugadores[i] == equipaciones[eqInd] - 1) {
-			eq--;
-			eqInd++;
-		}
-		else if (jugadores[i] > equipaciones[eqInd]) {
-			eqInd++;
-			i--;
+	int cont = 1, horaOc = cartelera[0].fin;
+
+	for (int i = 1; i < n; i++) {
+		if (cartelera[i].ini >= horaOc) {
+			cont++;
+			horaOc = cartelera[i].fin;
 		}
 	}
 
-	// escribir la solución
-	cout << eq << "\n";
-
+	cout << cont << "\n";
 	return true;
 }
 
