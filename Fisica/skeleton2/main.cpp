@@ -166,6 +166,7 @@ void keyPress(unsigned char key, const PxTransform& camera)
 			GetCamera()->getTransform().p.x + GetCamera()->getDir().x * 400,
 			GetCamera()->getTransform().p.y + GetCamera()->getDir().y * 400,
 			GetCamera()->getTransform().p.z + GetCamera()->getDir().z * 400 };
+	
 	switch (toupper(key))
 	{
 	case ' ':
