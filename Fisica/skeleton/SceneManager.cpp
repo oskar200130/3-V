@@ -40,6 +40,11 @@ FireworkScene::FireworkScene() : Scene() {
 	initFireworkRules();
 }
 
+FireworkScene::~FireworkScene(){
+	for (int i = 0; i < fireworks.size(); i++) 
+		delete fireworks.front();
+}
+
 void FireworkScene::initFireworkRules() {
 	rules[0] = new FireWorkRule();
 	rules[0]->setParameters(FireWorkType::explosion, 1.3, 2.7, Vector3(-1, 6, -1), Vector3(-9, 9, -8), 0.999);
@@ -110,8 +115,8 @@ void FireworkScene::keyPressed(unsigned char key, const PxTransform& camera)
 
 	switch (toupper(key))
 	{
-	case ' ':{
-		FireWork * f = new FireWork(FireWorkType::particle);
+	case ' ': {
+		FireWork* f = new FireWork(FireWorkType::particle);
 		PxTransform pos = GetCamera()->getTransform();
 		rules[3]->create(f, pos.p);
 		fireworks.push_back(f);
@@ -120,8 +125,8 @@ void FireworkScene::keyPressed(unsigned char key, const PxTransform& camera)
 		forceReg->add(f, pForces[3]);
 		break;
 	}
-	case 'M':{
-		FireWork * f = new FireWork(FireWorkType::particle);
+	case 'M': {
+		FireWork* f = new FireWork(FireWorkType::particle);
 		PxTransform pos = GetCamera()->getTransform();
 		rules[3]->create(f, pos.p);
 		fireworks.push_back(f);
@@ -130,8 +135,8 @@ void FireworkScene::keyPressed(unsigned char key, const PxTransform& camera)
 		forceReg->add(f, pForces[3]);
 		break;
 	}
-	case 'C':{
-		FireWork * f = new FireWork(FireWorkType::explosion);
+	case 'C': {
+		FireWork* f = new FireWork(FireWorkType::explosion);
 		rules[0]->create(f, position);
 		fireworks.push_back(f);
 		forceReg->add(f, pForces[0]);
@@ -139,8 +144,8 @@ void FireworkScene::keyPressed(unsigned char key, const PxTransform& camera)
 		forceReg->add(f, pForces[3]);
 		break;
 	}
-	case 'V':{
-		FireWork * f = new FireWork(FireWorkType::shoot);
+	case 'V': {
+		FireWork* f = new FireWork(FireWorkType::shoot);
 		position.x += 200;
 		position.z += 200;
 		rules[1]->create(f, position);
@@ -160,6 +165,21 @@ void FireworkScene::keyPressed(unsigned char key, const PxTransform& camera)
 		forceReg->add(f, pForces[0]);
 		forceReg->add(f, pForces[2]);
 		forceReg->add(f, pForces[3]);
+		break;
+	}
+	case 'E':
+	{
+		static_cast<Wind*>(pForces[2])->activateWind();
+		break;
+	}
+	case 'R':
+	{
+		static_cast<Wind*>(pForces[2])->deactivateWind();
+		break;
+	}
+	case 'T':
+	{
+		static_cast<Explosion*>(pForces[3])->activateExplosion();
 		break;
 	}
 	default:

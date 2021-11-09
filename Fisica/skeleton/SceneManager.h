@@ -5,7 +5,7 @@
 class Scene {
 public:
 	Scene() { initForces(); };
-	~Scene() {};
+	~Scene() { delete forceReg; delete pForces; };
 	virtual void update(float t) {};
 	virtual void keyPressed(unsigned char key, const PxTransform& camera) {};
 protected:
@@ -20,29 +20,15 @@ protected:
 class FireworkScene : public Scene{
 public:
 	FireworkScene();
-	~FireworkScene() {};
+	~FireworkScene();
+
 private:
 	std::vector<FireWork*> fireworks;
 	FireWorkRule* rules[4];
 
 	void initFireworkRules();
 	void fireWorksUpdate(float t);
-protected:
-	virtual void update(float t);
-	void keyPressed(unsigned char key, const PxTransform& camera);
-};
 
-//-------------------------------------------------------
-
-class ForcesScene : public Scene{
-public:
-	ForcesScene();
-	~ForcesScene() {};
-private:
-	std::vector<FireWork*> fireworks;
-	FireWorkRule* rules[4];
-
-	void fireWorksUpdate(float t);
 protected:
 	virtual void update(float t);
 	void keyPressed(unsigned char key, const PxTransform& camera);
