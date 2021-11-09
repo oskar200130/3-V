@@ -1,20 +1,27 @@
 #include "SceneManager.h"
 
 SceneManager::SceneManager(int scene) {
-	numScene = scene;
-	switch (scene) {
-	case 0:
-		actualScene = new FireworkScene();
-		break;
-	default:
-		break;
-	}
+	sceneSelector(scene);
 }
 
 void SceneManager::changeScene(int scene) {
 	if (scene != numScene) {
 		delete actualScene;
-		SceneManager::SceneManager(scene);
+		sceneSelector(scene);
+	}
+}
+
+void SceneManager::sceneSelector(int scene){
+	numScene = scene;
+	switch (scene) {
+	case 0:
+		actualScene = new FireworkScene();
+		break;
+	case 1:
+		actualScene = new SpringScene();
+		break;
+	default:
+		break;
 	}
 }
 
@@ -66,7 +73,6 @@ void FireworkScene::initFireworkRules() {
 }
 
 void FireworkScene::fireWorksUpdate(float t) {
-	forceReg->updateForces(t);
 	vector<FireWork*> add;
 	for (auto it = fireworks.begin(); it != fireworks.end(); ++it) {
 		FireWork* firework = *it;
@@ -120,6 +126,7 @@ void FireworkScene::keyPressed(unsigned char key, const PxTransform& camera)
 		PxTransform pos = GetCamera()->getTransform();
 		rules[3]->create(f, pos.p);
 		fireworks.push_back(f);
+		forceReg->add(f, pForces[0]);
 		forceReg->add(f, pForces[0]);
 		forceReg->add(f, pForces[2]);
 		forceReg->add(f, pForces[3]);
@@ -185,4 +192,29 @@ void FireworkScene::keyPressed(unsigned char key, const PxTransform& camera)
 	default:
 		break;
 	}
+}
+
+//--------------------------------------------------------------------
+
+SpringScene::SpringScene() : Scene() {
+	p1.init(Vector3(-80, 50, -80), Vector3(0, 0, 0), Vector3(0, 0, 0), Vector4(1, 0, 0, 1), 0.999, 0);
+
+	p2.init(Vector3(-80, 30, -80), Vector3(0, 0, 0), Vector3(0, 0, 0), Vector4(1, 0, 0, 1), 0.999);
+	forceReg->add(&p2, pForces[0]);
+
+	ParticleSpring* sp1 = new ParticleSpring(&p2, 2.0f, 3.5f);
+	forceReg->add(&p1, sp1);
+	
+	ParticleSpring* sp2 = new ParticleSpring(&p1, 2.0f, 3.5f);
+	forceReg->add(&p2, sp2);
+}
+
+SpringScene::~SpringScene()
+{
+}
+
+void SpringScene::update(float t){
+	//Scene::update(t);
+	p1.integrate(t);
+	p2.integrate(t);
 }

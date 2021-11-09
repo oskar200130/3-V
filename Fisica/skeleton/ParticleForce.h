@@ -85,3 +85,15 @@ public:
 };
 
 //--------------------------------------------------------------------------------------------
+
+class ParticleSpring : public ParticleForceGenerator {
+	//The other part the string is attached to
+	Particle* other;
+
+	float k;
+	float restLenght;
+
+public:
+	ParticleSpring(Particle* _other, float _k, float restL) :other(_other), k(_k), restLenght(restL) {};
+	virtual void updateForce(Particle* particle, float t);
+};

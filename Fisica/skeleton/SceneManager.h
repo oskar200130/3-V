@@ -5,8 +5,8 @@
 class Scene {
 public:
 	Scene() { initForces(); };
-	~Scene() { delete forceReg; delete pForces; };
-	virtual void update(float t) {};
+	virtual ~Scene() {};
+	virtual void update(float t) { forceReg->updateForces(t); };
 	virtual void keyPressed(unsigned char key, const PxTransform& camera) {};
 protected:
 	ParticleForceRegistry* forceReg;
@@ -17,10 +17,10 @@ protected:
 
 //-------------------------------------------------------
 
-class FireworkScene : public Scene{
+class FireworkScene : public Scene {
 public:
 	FireworkScene();
-	~FireworkScene();
+	virtual ~FireworkScene();
 
 private:
 	std::vector<FireWork*> fireworks;
@@ -36,13 +36,26 @@ protected:
 
 //-------------------------------------------------------
 
-class SceneManager{
+class SpringScene : public Scene {
+public:
+	SpringScene();
+	virtual ~SpringScene();
+private:
+	Particle p1, p2;
+protected:
+	virtual void update(float t);
+	void keyPressed(unsigned char key, const PxTransform& camera) {};
+};
+//-------------------------------------------------------
+
+class SceneManager {
 private:
 	Scene* actualScene;
 	int numScene;
 public:
 	SceneManager(int scene);
 	void changeScene(int scene);
+	void sceneSelector(int scene);
 	~SceneManager();
 	void update(float t) { actualScene->update(t); };
 	void keyPressed(unsigned char key, const PxTransform& camera) { actualScene->keyPressed(key, camera); };

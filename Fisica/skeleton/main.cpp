@@ -90,7 +90,22 @@ void cleanupPhysics(bool interactive)
 // Function called when a key is pressed
 void keyPress(unsigned char key, const PxTransform& camera)
 {
-	sceneMng->keyPressed(key, camera);
+	PX_UNUSED(camera);
+	switch (toupper(key))
+	{
+	case '0': {
+		sceneMng->changeScene(0);
+		break;
+	}
+	case '1': {
+		sceneMng->changeScene(1);
+		break;
+	}
+	default: {
+		sceneMng->keyPressed(key, camera);
+		break;
+	}
+	}
 }
 
 void onCollision(physx::PxActor* actor1, physx::PxActor* actor2)

@@ -117,3 +117,17 @@ void Explosion::deactivateExplosion() {
 		activated = false;
 	}
 }
+
+//-------------------------------------------------------------------------------------------
+
+void ParticleSpring::updateForce(Particle* particle, float t){
+	Vector3 f = particle->getPosition().p;
+	f -= other->getPosition().p;
+
+	float l = f.normalize();
+
+	float deltaL = l - restLenght;
+	float forceMagnitude = -k * deltaL;
+	f *= forceMagnitude;
+	particle->addForce(f);
+}
