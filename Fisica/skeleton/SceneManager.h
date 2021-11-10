@@ -23,13 +23,14 @@ public:
 	virtual ~FireworkScene();
 
 private:
-	std::vector<FireWork*> fireworks;
-	FireWorkRule* rules[4];
 
 	void initFireworkRules();
 	void fireWorksUpdate(float t);
 
 protected:
+	std::vector<FireWork*> fireworks;
+	FireWorkRule* rules[4];
+
 	virtual void update(float t);
 	void keyPressed(unsigned char key, const PxTransform& camera);
 };
@@ -44,7 +45,7 @@ private:
 	Particle p1, p2;
 protected:
 	virtual void update(float t);
-	void keyPressed(unsigned char key, const PxTransform& camera) {};
+	void keyPressed(unsigned char key, const PxTransform& camera);
 };
 //-------------------------------------------------------
 

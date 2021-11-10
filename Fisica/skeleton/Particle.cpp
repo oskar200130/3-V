@@ -12,7 +12,10 @@ void Particle::init(Vector3 p, Vector3 v, Vector3 ac, Vector4 c, float dam, floa
 	color = c;
 	damping = dam;
 	in_mas = in_m;
-	renderItem = new RenderItem(CreateShape(PxSphereGeometry(size)), &pos, color);
+	if(in_mas != 0)
+		renderItem = new RenderItem(CreateShape(PxSphereGeometry(size)), &pos, color);
+	else
+		renderItem = new RenderItem(CreateShape(PxBoxGeometry(size, size, size)), &pos, color);
 };
 
 void Particle::integrate(double t) {

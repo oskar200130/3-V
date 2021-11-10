@@ -11,7 +11,7 @@ void SceneManager::changeScene(int scene) {
 	}
 }
 
-void SceneManager::sceneSelector(int scene){
+void SceneManager::sceneSelector(int scene) {
 	numScene = scene;
 	switch (scene) {
 	case 0:
@@ -47,9 +47,12 @@ FireworkScene::FireworkScene() : Scene() {
 	initFireworkRules();
 }
 
-FireworkScene::~FireworkScene(){
-	for (int i = 0; i < fireworks.size(); i++) 
-		delete fireworks.front();
+FireworkScene::~FireworkScene() {
+	for (FireWork* f : fireworks) {
+		forceReg->removePartInstance(*fireworks.begin());
+		delete* fireworks.begin();
+		fireworks.erase(fireworks.begin());
+	}
 }
 
 void FireworkScene::initFireworkRules() {
@@ -108,6 +111,7 @@ void FireworkScene::fireWorksUpdate(float t) {
 }
 
 void FireworkScene::update(float t) {
+	Scene::update(t);
 	fireWorksUpdate(t);
 }
 
@@ -197,15 +201,15 @@ void FireworkScene::keyPressed(unsigned char key, const PxTransform& camera)
 //--------------------------------------------------------------------
 
 SpringScene::SpringScene() : Scene() {
-	p1.init(Vector3(-80, 50, -80), Vector3(0, 0, 0), Vector3(0, 0, 0), Vector4(1, 0, 0, 1), 0.999, 0);
+	p1.init(Vector3(-20, 50, -20), Vector3(0, 0, 0), Vector3(0, 0, 0), Vector4(1, 0, 0, 1), 0.5, 0);
 
-	p2.init(Vector3(-80, 30, -80), Vector3(0, 0, 0), Vector3(0, 0, 0), Vector4(1, 0, 0, 1), 0.999);
-	forceReg->add(&p2, pForces[0]);
+	p2.init(Vector3(-20, 10, -20), Vector3(0, 0, 0), Vector3(0, 0, 0), Vector4(1, 0, 0, 1), 0.5);
+	forceReg->add(&p2, pForces[2]);
 
-	ParticleSpring* sp1 = new ParticleSpring(&p2, 2.0f, 3.5f);
+	ParticleSpring* sp1 = new ParticleSpring(&p2, 800.0f, 30.0f);
 	forceReg->add(&p1, sp1);
-	
-	ParticleSpring* sp2 = new ParticleSpring(&p1, 2.0f, 3.5f);
+
+	ParticleSpring* sp2 = new ParticleSpring(&p1, 800.0f, 30.0f);
 	forceReg->add(&p2, sp2);
 }
 
@@ -213,8 +217,21 @@ SpringScene::~SpringScene()
 {
 }
 
-void SpringScene::update(float t){
-	//Scene::update(t);
+void SpringScene::update(float t) {
+	Scene::update(t);
 	p1.integrate(t);
 	p2.integrate(t);
+}
+
+void SpringScene::keyPressed(unsigned char key, const PxTransform& camera) {
+	switch (key) {
+	case 'T':
+	{
+		static_cast<Explosion*>(pForces[3])->activateExplosion();
+		break;
+	}
+	default: {
+		break;
+	}
+	}
 }
