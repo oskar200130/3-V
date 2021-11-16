@@ -366,7 +366,7 @@ void BuoyancyScene::keyPressed(unsigned char key, const PxTransform& camera) {
 		}
 		break;
 	}
-	case 'Ñ':
+	case 'ï¿½':
 	{
 		if (vol > 0.01) {
 			vol -= 0.01;
