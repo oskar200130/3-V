@@ -1,4 +1,5 @@
 #include "SceneManager.h"
+#include <iostream>
 
 SceneManager::SceneManager(int scene) {
 	sceneSelector(scene);
@@ -20,6 +21,9 @@ void SceneManager::sceneSelector(int scene) {
 	case 1:
 		actualScene = new SpringScene();
 		break;
+	case 2:
+		actualScene = new BuoyancyScene();
+		break;
 	default:
 		break;
 	}
@@ -31,6 +35,13 @@ SceneManager::~SceneManager() {
 }
 
 //--------------------------------------------------------------------
+
+Scene::~Scene(){
+	forceReg->clear();
+	delete forceReg;
+	for (auto f : pForces)
+		delete f;
+}
 
 void Scene::initForces() {
 	forceReg = new ParticleForceRegistry();
@@ -52,6 +63,9 @@ FireworkScene::~FireworkScene() {
 		forceReg->removePartInstance(*fireworks.begin());
 		delete* fireworks.begin();
 		fireworks.erase(fireworks.begin());
+	}
+	for (FireWorkRule* r : rules) {
+		delete r;
 	}
 }
 
@@ -201,33 +215,163 @@ void FireworkScene::keyPressed(unsigned char key, const PxTransform& camera)
 //--------------------------------------------------------------------
 
 SpringScene::SpringScene() : Scene() {
-	p1.init(Vector3(-20, 50, -20), Vector3(0, 0, 0), Vector3(0, 0, 0), Vector4(1, 0, 0, 1), 0.5, 0);
+	k = 2.0;
+	p1 = new Particle();
+	p1->init(Vector3(-60, 50, -60), Vector3(0, 0, 0), Vector3(0, 0, 0), Vector4(1, 0, 0, 1), 0.5, 0);
 
-	p2.init(Vector3(-20, 10, -20), Vector3(0, 0, 0), Vector3(0, 0, 0), Vector4(1, 0, 0, 1), 0.5);
-	forceReg->add(&p2, pForces[2]);
+	p2 = new Particle();
+	p2->init(Vector3(-60, 10, -60), Vector3(0, 0, 0), Vector3(0, 0, 0), Vector4(1, 0, 0, 1), 0.5);
+	forceReg->add(p2, pForces[0]);
+	forceReg->add(p2, pForces[3]);
 
-	ParticleSpring* sp1 = new ParticleSpring(&p2, 800.0f, 30.0f);
-	forceReg->add(&p1, sp1);
+	sp1 = new ParticleSpring(p2, k, 30.0f);
+	forceReg->add(p1, sp1);
 
-	ParticleSpring* sp2 = new ParticleSpring(&p1, 800.0f, 30.0f);
-	forceReg->add(&p2, sp2);
+	sp2 = new ParticleSpring(p1, k, 30.0f);
+	forceReg->add(p2, sp2);
 }
 
-SpringScene::~SpringScene()
-{
+SpringScene::~SpringScene() {
+	delete p1;
+	delete p2;
+	delete sp1;
+	delete sp2;
+	p1 = p2 = nullptr;
+	sp1 = sp2 = nullptr;
 }
 
 void SpringScene::update(float t) {
 	Scene::update(t);
-	p1.integrate(t);
-	p2.integrate(t);
+	p1->integrate(t);
+	p2->integrate(t);
+	static_cast<Explosion*>(pForces[3])->update(t);
 }
 
 void SpringScene::keyPressed(unsigned char key, const PxTransform& camera) {
-	switch (key) {
+	switch (toupper(key)) {
 	case 'T':
 	{
 		static_cast<Explosion*>(pForces[3])->activateExplosion();
+		break;
+	}
+	case 'R':
+	{
+		changeAnchor();
+		break;
+	}
+	case '+':
+	{
+		if (k < 8) {
+			k++;
+			sp1->changeK(k);
+			sp2->changeK(k);
+		}
+		break;
+	}
+	case '-':
+	{
+		if (k > 1) {
+			k--;
+			sp1->changeK(k);
+			sp2->changeK(k);
+		}
+		break;
+	}
+	default: {
+		break;
+	}
+	}
+}
+
+void SpringScene::changeAnchor() {
+	int m = p1->getMass();
+	delete p1;
+	delete p2;
+	delete sp1;
+	delete sp2;
+	forceReg->clear();
+
+	p1 = new Particle();
+
+	if (m != 1)
+		p1->init(Vector3(-60, 60, -60), Vector3(0, 0, 0), Vector3(0, 0, 0), Vector4(1, 0, 0, 1), 0.5, 0);
+	else {
+		p1->init(Vector3(-80, 10, -50), Vector3(0, 0, 0), Vector3(0, 0, 0), Vector4(1, 0, 0, 1), 0.5);
+		forceReg->add(p1, pForces[0]);
+		forceReg->add(p1, pForces[3]);
+	}
+
+	p2 = new Particle();
+	p2->init(Vector3(-60, 10, -60), Vector3(0, 0, 0), Vector3(0, 0, 0), Vector4(1, 0, 0, 1), 0.5);
+	forceReg->add(p2, pForces[0]);
+	forceReg->add(p1, pForces[3]);
+
+	sp1 = new ParticleSpring(p2, k + 0.1, 30.0f);
+	forceReg->add(p1, sp1);
+
+	sp2 = new ParticleSpring(p1, k + 0.1, 30.0f);
+	forceReg->add(p2, sp2);
+}
+
+//--------------------------------------------------------------------
+
+BuoyancyScene::BuoyancyScene() : Scene() {
+	vol = 0.03;
+	mass = 20;
+
+	p = new Particle();
+	p->init(Vector3(-60, 60, -60), Vector3(0, 0, 0), Vector3(0, 0, 0), Vector4(1, 0, 0, 1), 0.5, mass, 10, true);
+	forceReg->add(p, pForces[0]);
+
+	by = new ParticleBuoyancy(10, vol, 10);
+	forceReg->add(p, by);
+
+	floor = new Particle();
+	floor->init(Vector3(-60, 10, -60), Vector3(0, 0, 0), Vector3(0, 0, 0), Vector4(0, 0.02, 1, 0.3), 0.85, 0, 2.0, true, Vector3(50, 0.2, 50));
+}
+
+BuoyancyScene::~BuoyancyScene() {
+	delete p;
+	delete floor;
+	delete by;
+	p = floor = nullptr;
+	by = nullptr;
+}
+
+void BuoyancyScene::update(float t) {
+	Scene::update(t);
+	p->integrate(t);
+}
+
+void BuoyancyScene::keyPressed(unsigned char key, const PxTransform& camera) {
+	switch (toupper(key)) {
+	case '+':
+	{
+		mass++;
+		p->setMass(mass);
+		break;
+	}
+	case '-':
+	{
+		if (mass > 1)
+			mass--;
+		p->setMass(mass);
+		break;
+	}
+	case 'P':
+	{
+		if (vol < 0.08) {
+			vol += 0.01;
+			by->changeVol(vol);
+		}
+		break;
+	}
+	case 'Ñ':
+	{
+		if (vol > 0.01) {
+			vol -= 0.01;
+			by->changeVol(vol);
+		}
 		break;
 	}
 	default: {

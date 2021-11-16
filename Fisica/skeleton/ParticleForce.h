@@ -29,7 +29,7 @@ public:
 	void remove(Particle* particle, ParticleForceGenerator* fg);
 	void removePartInstance(Particle* particle);
 	// Removes all associations. Particle and Generators won't be deleted
-	void clear() ;
+	void clear();
 	// Update all the generators in the registry
 	void updateForces(float t);
 };
@@ -53,6 +53,7 @@ class Wind : public ParticleForceGenerator
 private:
 	Vector3 g;
 	float radius;
+	PxTransform* pos;
 	RenderItem* renderItem;
 	bool activated;
 public:
@@ -70,11 +71,12 @@ class Explosion : public ParticleForceGenerator
 private:
 	Vector3 g;
 	float radius;
+	PxTransform* pos;
 	RenderItem* renderItem;
 	bool activated;
 	float lastIni;
 	float duration;
-	
+
 	void deactivateExplosion();
 public:
 	Explosion(Vector3 x, float rad) : g(x), radius(rad), renderItem(nullptr), activated(false), lastIni(0.0), duration(0.25) {};
@@ -95,5 +97,23 @@ class ParticleSpring : public ParticleForceGenerator {
 
 public:
 	ParticleSpring(Particle* _other, float _k, float restL) :other(_other), k(_k), restLenght(restL) {};
+	inline void changeK(float _k) { k = _k; };
 	virtual void updateForce(Particle* particle, float t);
+};
+
+//--------------------------------------------------------------------------------------------
+
+class ParticleBuoyancy : public ParticleForceGenerator {
+private:
+	float maxDepth;
+	float volume;
+
+	float waterHeight;
+
+	float liquidDensity;
+
+public:
+	ParticleBuoyancy(float mxDepth, float vol, float watHeight, float liqDensity = 1000.0f) : maxDepth(mxDepth), volume(vol), waterHeight(watHeight), liquidDensity(liqDensity) {};
+	virtual void updateForce(Particle* particle, float t);
+	inline void changeVol(float v) { volume = v; };
 };

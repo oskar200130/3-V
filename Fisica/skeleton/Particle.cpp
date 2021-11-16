@@ -3,29 +3,40 @@
 
 Particle::~Particle() {
 	DeregisterRenderItem(renderItem);
+	delete renderItem;
 	renderItem = nullptr;
 }
-void Particle::init(Vector3 p, Vector3 v, Vector3 ac, Vector4 c, float dam, float in_m, float size) {
+void Particle::init(Vector3 p, Vector3 v, Vector3 ac, Vector4 c, float dam, float in_m, float size, bool cube, Vector3 dim) {
 	pos.p = p;
 	vel = v;
 	a = ac;
 	color = c;
 	damping = dam;
-	in_mas = in_m;
-	if(in_mas != 0)
+	if (cube || in_m < 1) {
+		if(in_m < 1) in_mas = 1;
+		if (renderItem != nullptr)
+			delete renderItem;
+		if (dim.x != 0 && dim.y != 0 && dim.z != 0)
+			renderItem = new RenderItem(CreateShape(PxBoxGeometry(dim.x, dim.y, dim.z)), &pos, color);
+		else
+			renderItem = new RenderItem(CreateShape(PxBoxGeometry(size, size, size)), &pos, color);
+	}
+	else {
+		in_mas = 1 / in_m;
+		if (renderItem != nullptr)
+			delete renderItem;
 		renderItem = new RenderItem(CreateShape(PxSphereGeometry(size)), &pos, color);
-	else
-		renderItem = new RenderItem(CreateShape(PxBoxGeometry(size, size, size)), &pos, color);
+	}
 };
 
 void Particle::integrate(double t) {
 
-	if (in_mas <= 0.0f) return;
+	if (in_mas == 1.0f) return;
 	// Update position
 	pos.p += vel * t;
 
 	Vector3 totalAcceleration = a;
-	totalAcceleration += force * (1/in_mas);
+	totalAcceleration += force * (1 / in_mas);
 
 	// Update linear velocity
 	vel += totalAcceleration * t;
@@ -39,7 +50,7 @@ void Particle::clearForce() {
 	force = Vector3(0, 0, 0);
 }
 
-void Particle::addForce(const Vector3& f){
+void Particle::addForce(const Vector3& f) {
 	force += f;
 }
 
@@ -97,12 +108,12 @@ void FireWorkRule::configType(FireWork* fir, Vector3& vel, float& size, Vector4&
 		}
 		div *= 6;
 
-		vel += Vector3(-cos(360.0f / 9.0f * (numH)), sin(360.0f / 9.0f * (numH)), cos(360.0f / 9.0f * (numH)))*div;
+		vel += Vector3(-cos(360.0f / 9.0f * (numH)), sin(360.0f / 9.0f * (numH)), cos(360.0f / 9.0f * (numH))) * div;
 		break;
 	case FireWorkType::particle:
 		color = { 1,0,1,1 };
 		size = fir->expAge + 2.0f;
-		vel = GetCamera()->getDir()*100;
+		vel = GetCamera()->getDir() * 100;
 	}
 }
 
@@ -118,5 +129,5 @@ void FireWorkRule::create(FireWork* fir, Vector3 pos, const FireWork* parent) {
 
 	float s = 0.0;
 	configType(fir, vel, s, color);
-	fir->init(pos, vel, { 0, 0, 0 }, color, damping, 0.1, 3.0f / s);
+	fir->init(pos, vel, { 0, 0, 0 }, color, damping, 10, 3.0f / s);
 }

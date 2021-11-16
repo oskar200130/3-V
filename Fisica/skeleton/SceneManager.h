@@ -5,7 +5,7 @@
 class Scene {
 public:
 	Scene() { initForces(); };
-	virtual ~Scene() {};
+	virtual ~Scene();
 	virtual void update(float t) { forceReg->updateForces(t); };
 	virtual void keyPressed(unsigned char key, const PxTransform& camera) {};
 protected:
@@ -42,7 +42,25 @@ public:
 	SpringScene();
 	virtual ~SpringScene();
 private:
-	Particle p1, p2;
+	Particle* p1, *p2;
+	ParticleSpring* sp1, * sp2;
+	float k;
+protected:
+	virtual void update(float t);
+	void keyPressed(unsigned char key, const PxTransform& camera);
+	void changeAnchor();
+};
+
+//-------------------------------------------------------
+
+class BuoyancyScene : public Scene {
+public:
+	BuoyancyScene();
+	virtual ~BuoyancyScene();
+private:
+	Particle* p, * floor;
+	ParticleBuoyancy* by;
+	float vol, mass;
 protected:
 	virtual void update(float t);
 	void keyPressed(unsigned char key, const PxTransform& camera);

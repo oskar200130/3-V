@@ -23,11 +23,12 @@ private:
 	Vector3 force;
 
 public:
-	Particle() :pos(0, 0, 0), vel(0), a(0), color({ 0,0,0,1 }), damping(0), in_mas(0.1), force(Vector3(0, 0, 0)) { };
-	Particle(PxTransform p, Vector3 v, Vector3 ac, Vector4 c = { 1,1,1,1 }, float dam = 0.999, float in_m = 5.0) :pos(p), vel(v), a(ac), color(c), damping(dam), in_mas(in_m), force(Vector3(0,0,0)) {
+	Particle() :pos(0, 0, 0), vel(0), a(0), color({ 0,0,0,1 }), damping(0), in_mas(0.1), force(Vector3(0, 0, 0)), renderItem(nullptr) { };
+	Particle(PxTransform p, Vector3 v, Vector3 ac, Vector4 c = { 1,1,1,1 }, float dam = 0.999, float in_m = 5.0) : pos(p), vel(v), a(ac), color(c),
+		damping(dam), in_mas(1 / in_m), force(Vector3(0, 0, 0)) {
 		renderItem = new RenderItem(CreateShape(PxSphereGeometry(2.0)), &pos, color);
 	};
-	void init(Vector3 p, Vector3 v, Vector3 ac, Vector4 c = { 1,1,1,1 }, float dam = 0.999, float in_m = 5.0, float size = 2.0);
+	void init(Vector3 p, Vector3 v, Vector3 ac, Vector4 c = { 1,1,1,1 }, float dam = 0.999, float in_m = 5.0, float size = 2.0, bool cube = false, Vector3 dimension = Vector3{ 0, 0, 0 });
 	~Particle();
 	void integrate(double t);
 
@@ -42,6 +43,8 @@ public:
 	inline bool isActive() const { return active; };
 
 	inline void setInactive() { active = false; };
+	inline void setColor(Vector4 c) { color = c; renderItem->color = c; };
+	inline void setMass(float m) { if (m > 1) in_mas = 1 / m; };
 };
 
 //--------------------------------------------------------------------------------------------

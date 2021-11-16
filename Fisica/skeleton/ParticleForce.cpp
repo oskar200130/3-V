@@ -41,7 +41,7 @@ void ParticleForceRegistry::updateForces(float t) {
 //--------------------------------------------------------------------------------------------
 
 void ParticleGravity::updateForce(Particle* particle, float t) {
-	if (particle->getMass() == 0) return;
+	if (particle->getMass() == 1) return;
 	particle->addForce(g);
 }
 
@@ -55,7 +55,7 @@ void Wind::updateForce(Particle* particle, float t) {
 
 void Wind::activateWind() {
 	if (!activated) {
-		PxTransform* pos = new PxTransform(0, 0, 0);
+		pos = new PxTransform(0, 0, 0);
 
 		pos->p = {
 				GetCamera()->getTransform().p.x + (GetCamera()->getDir().x * 200),
@@ -71,6 +71,8 @@ void Wind::activateWind() {
 void Wind::deactivateWind() {
 	if (activated) {
 		DeregisterRenderItem(renderItem);
+		delete renderItem;
+		delete pos;
 		renderItem = nullptr;
 		activated = false;
 	}
@@ -97,7 +99,7 @@ void Explosion::update(float t) {
 
 void Explosion::activateExplosion() {
 	if (!activated) {
-		PxTransform* pos = new PxTransform(0, 0, 0);
+		pos = new PxTransform(0, 0, 0);
 
 		pos->p = {
 				GetCamera()->getTransform().p.x + (GetCamera()->getDir().x * 200),
@@ -113,6 +115,8 @@ void Explosion::activateExplosion() {
 void Explosion::deactivateExplosion() {
 	if (activated) {
 		DeregisterRenderItem(renderItem);
+		delete renderItem;
+		delete pos;
 		renderItem = nullptr;
 		activated = false;
 	}
@@ -120,7 +124,7 @@ void Explosion::deactivateExplosion() {
 
 //-------------------------------------------------------------------------------------------
 
-void ParticleSpring::updateForce(Particle* particle, float t){
+void ParticleSpring::updateForce(Particle* particle, float t) {
 	Vector3 f = particle->getPosition().p;
 	f -= other->getPosition().p;
 
@@ -129,5 +133,30 @@ void ParticleSpring::updateForce(Particle* particle, float t){
 	float deltaL = l - restLenght;
 	float forceMagnitude = -k * deltaL;
 	f *= forceMagnitude;
+	particle->addForce(f);
+}
+
+//-------------------------------------------------------------------------------------------
+
+void ParticleBuoyancy::updateForce(Particle* particle, float t) {
+	float depth;
+	depth = particle->getPosition().p.y;
+	Vector3 f(0.0f, 0.0f, 0.0f);
+
+	if (depth > (waterHeight + maxDepth)) {
+		particle->setColor({ 1,0,0,1 });
+		return;
+	}
+
+	if (depth < (waterHeight - maxDepth)) {
+		particle->setColor({ 1,0,1,1 });
+		f.y = liquidDensity * volume;
+	}
+	else {
+		float depthExt = waterHeight + maxDepth;
+		float volFactor = (depthExt - depth) / (2 * maxDepth);
+		f.y = liquidDensity * volume * volFactor;
+		particle->setColor({ 0.5,0,1,1 });
+	}
 	particle->addForce(f);
 }

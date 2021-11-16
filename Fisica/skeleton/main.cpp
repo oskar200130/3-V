@@ -85,6 +85,8 @@ void cleanupPhysics(bool interactive)
 	transport->release();
 
 	gFoundation->release();
+	delete sceneMng;
+	sceneMng = nullptr;
 }
 
 // Function called when a key is pressed
@@ -93,18 +95,18 @@ void keyPress(unsigned char key, const PxTransform& camera)
 	PX_UNUSED(camera);
 	switch (toupper(key))
 	{
-	case '0': {
+	case '0': 
 		sceneMng->changeScene(0);
 		break;
-	}
-	case '1': {
+	case '1': 
 		sceneMng->changeScene(1);
 		break;
-	}
-	default: {
+	case '2': 
+		sceneMng->changeScene(2);
+		break;
+	default: 
 		sceneMng->keyPressed(key, camera);
 		break;
-	}
 	}
 }
 
@@ -117,6 +119,7 @@ void onCollision(physx::PxActor* actor1, physx::PxActor* actor2)
 
 int main(int, const char* const*)
 {
+//_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF); // Check Memory Leaks
 #ifndef OFFLINE_EXECUTION 
 	extern void renderLoop();
 	renderLoop();
@@ -127,6 +130,5 @@ int main(int, const char* const*)
 		stepPhysics(false);
 	cleanupPhysics(false);
 #endif
-	delete sceneMng;
 	return 0;
 }
