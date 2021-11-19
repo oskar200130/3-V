@@ -42,7 +42,7 @@ void ParticleForceRegistry::updateForces(float t) {
 
 void ParticleGravity::updateForce(Particle* particle, float t) {
 	if (particle->getMass() == 1) return;
-	particle->addForce(g);
+	particle->addForce(g * (1 / particle->getMass()));
 }
 
 //-------------------------------------------------------------------------------------------
