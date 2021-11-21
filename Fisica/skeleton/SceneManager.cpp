@@ -145,7 +145,6 @@ void FireworkScene::keyPressed(unsigned char key, const PxTransform& camera)
 		rules[3]->create(f, pos.p);
 		fireworks.push_back(f);
 		forceReg->add(f, pForces[0]);
-		forceReg->add(f, pForces[0]);
 		forceReg->add(f, pForces[2]);
 		forceReg->add(f, pForces[3]);
 		break;
@@ -366,7 +365,7 @@ void BuoyancyScene::keyPressed(unsigned char key, const PxTransform& camera) {
 		}
 		break;
 	}
-	case 'ï¿½':
+	case 'L':
 	{
 		if (vol > 0.01) {
 			vol -= 0.01;
@@ -378,4 +377,25 @@ void BuoyancyScene::keyPressed(unsigned char key, const PxTransform& camera) {
 		break;
 	}
 	}
+}
+
+//--------------------------------------------------------------------
+
+RigidSolidScene::RigidSolidScene(PxPhysics* _gPhysics, PxScene* _gScene) {
+	gPhysics = _gPhysics;
+	gScene = _gScene;
+	// Ground
+	PxShape* shape = CreateShape(PxBoxGeometry(100, 1, 100));
+	PxRigidStatic* ground = gPhysics->createRigidStatic({ 0,0,0 });
+	ground->attachShape(*shape);
+	gScene->addActor(*ground);
+	RenderItem* item = nullptr;
+	item = new RenderItem(shape, ground, { 0.6, 0.2, 1, 1 });
+	// sistema de sólidos rígidos
+	bodySys = new BodySystem(gPhysics, gScene, { 0, 40, 0 });
+	// generadores de fuerzas y torques
+	windforce = new BodyWind({ 0.0f, 0.0f, 0.0f });
+	torquegenerator = new BodyTorquell({ 0.0f, 0.0f, 0.0f });
+	//registry
+	registry = new ParticleForceRegistry();
 }

@@ -67,6 +67,17 @@ protected:
 };
 //-------------------------------------------------------
 
+class RigidSolidScene : public Scene {
+public:
+	RigidSolidScene(PxPhysics* _gPhysics, PxScene* _gScene);
+	virtual ~RigidSolidScene();
+private:
+	PxPhysics* gPhysics;
+	PxScene* gScene;
+	BodySystem* bodySys;
+};
+//-------------------------------------------------------
+
 class SceneManager {
 private:
 	Scene* actualScene;
