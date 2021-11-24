@@ -11,6 +11,15 @@ public:
 
 //--------------------------------------------------------------------------------------------
 
+class BodyForceGenerator
+{
+public:
+	// Overload to provide functionality
+	virtual void updateForce(SolidBody* body, float t) = 0;
+};
+
+//--------------------------------------------------------------------------------------------
+
 class ParticleForceRegistry
 {
 protected:

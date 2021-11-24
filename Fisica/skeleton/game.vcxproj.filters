@@ -13,6 +13,7 @@
     <ClCompile Include="Particle.cpp" />
     <ClCompile Include="ParticleForce.cpp" />
     <ClCompile Include="SceneManager.cpp" />
+    <ClCompile Include="SolidBody.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core.hpp" />
@@ -28,6 +29,7 @@
     <ClInclude Include="ParticleForce.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="CheckML.h" />
+    <ClInclude Include="SolidBody.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Render">

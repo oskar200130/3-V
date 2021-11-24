@@ -71,8 +71,8 @@ class RigidSolidScene : public Scene {
 public:
 	RigidSolidScene(PxPhysics* _gPhysics, PxScene* _gScene);
 	virtual ~RigidSolidScene();
-private:
 	PxPhysics* gPhysics;
+private:
 	PxScene* gScene;
 	BodySystem* bodySys;
 };
