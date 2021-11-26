@@ -32,9 +32,9 @@ Casos base:												+-+-+-+-+
 														| | | | |
 														+-+-+-\^+	^, < y \ son flechas que indican las casillas necesarias para obtener el valor de * 
 														|0| | <*|	No es posible la reducción de memoria ya que para la reconstrucción necesitas los valores
-														+-+-+-+-+
+														+-+-+-+-+	por lo que el coste en memoria seria de O(n*m)
 
-El coste del algoritmo es O(n*m) siendo n la longitud de la primera palabra y m la longitud de la segunda.
+El coste en tiempo del algoritmo es O(n*m) siendo n la longitud de la primera palabra y m la longitud de la segunda.
  @ </answer> */
 
  // ================================================================
