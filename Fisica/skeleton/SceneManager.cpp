@@ -395,7 +395,7 @@ RigidSolidScene::RigidSolidScene(PxPhysics* _gPhysics, PxScene* _gScene) {
 	bodySys = new BodySystem(gPhysics, gScene, { 0, 40, 0 });
 	// generadores de fuerzas y torques
 	windforce = new BodyWind({ 0.0f, 0.0f, 0.0f });
-	torquegenerator = new BodyTorquell({ 0.0f, 0.0f, 0.0f });
+	torquegenerator = new BodyTorque({ 0.0f, 0.0f, 0.0f });
 	//registry
 	registry = new ParticleForceRegistry();
 }

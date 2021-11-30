@@ -2,6 +2,9 @@
 #include "core.hpp"
 #include "RenderUtils.hpp"
 
+using namespace physx;
+using namespace std;
+
 class SolidBody {
 public:
 	PxRigidDynamic* rigid = nullptr;

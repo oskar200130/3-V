@@ -1,7 +1,5 @@
 #pragma once
-#include "Particle.h"
 #include "ParticleForce.h"
-#include "SolidBody.h"
 
 class Scene {
 public:

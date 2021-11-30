@@ -1,8 +1,5 @@
 #include "SolidBody.h"
 
-using namespace physx;
-using namespace std;
-
 BodySystem::~BodySystem(){
 	gPhysics = nullptr;
 	gScene = nullptr;

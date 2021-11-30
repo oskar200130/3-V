@@ -253,6 +253,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BodyForce.cpp" />
     <ClCompile Include="callbacks.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Particle.cpp" />
@@ -264,6 +265,7 @@
     <ClCompile Include="SolidBody.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BodyForce.h" />
     <ClInclude Include="callbacks.hpp" />
     <ClInclude Include="CheckML.h" />
     <ClInclude Include="core.hpp" />
