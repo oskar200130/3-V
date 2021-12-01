@@ -10,6 +10,7 @@ public:
 protected:
 	ParticleForceRegistry* forceReg;
 	ParticleForceGenerator* pForces[4];
+	BodyForceGenerator* bForces[2];
 
 	void initForces();
 };
@@ -74,6 +75,8 @@ public:
 private:
 	PxScene* gScene;
 	BodySystem* bodySys;
+protected:
+	virtual void update(float t);
 };
 //-------------------------------------------------------
 
@@ -81,8 +84,10 @@ class SceneManager {
 private:
 	Scene* actualScene;
 	int numScene;
+	PxScene* gScene = NULL;
+	PxPhysics* gPhysics = NULL;
 public:
-	SceneManager(int scene);
+	SceneManager(int scene, PxScene* gSce, PxPhysics* gPhy);
 	void changeScene(int scene);
 	void sceneSelector(int scene);
 	~SceneManager();

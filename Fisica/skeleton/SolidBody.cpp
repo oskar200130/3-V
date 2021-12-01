@@ -1,6 +1,10 @@
 #include "SolidBody.h"
 
 BodySystem::~BodySystem(){
+	for (int i = bodies.size() - 1; i >= 0; i--) {
+		delete bodies.at(i);
+		bodies.erase(bodies.begin() + i);
+	}
 	gPhysics = nullptr;
 	gScene = nullptr;
 }
@@ -49,7 +53,14 @@ void BodySystem::integrate(float t) {
 		bodies.at(i)->torque = { 0.0f, 0.0f, 0.0f };
 		bodies.at(i)->life -= t;
 		if (bodies.at(i)->life < 0) {
-
+			delete bodies.at(i);
+			bodies.erase(bodies.begin() + i);
 		}
 	}
+}
+
+SolidBody::~SolidBody(){
+	DeregisterRenderItem(renderItem);
+	delete renderItem;
+	renderItem = nullptr;
 }

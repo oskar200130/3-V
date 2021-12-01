@@ -7,6 +7,7 @@ using namespace std;
 
 class SolidBody {
 public:
+	~SolidBody();
 	PxRigidDynamic* rigid = nullptr;
 	bool isNew;
 	float life;
@@ -29,7 +30,7 @@ class BodySystem{
 public:
 	BodySystem(PxPhysics* _gPhysics, PxScene* _gScene, PxTransform pSet, float stepSet = 1.5, bool _colorR = true, float lifeSet = 20, float sizeSet = 1,
 		int max = 10, Vector4 colorSet = { 1, 0, 0, 1.0 }) : gPhysics(_gPhysics), gScene(_gScene), p(pSet), step(stepSet), colorR(_colorR), life(lifeSet),
-		size(sizeSet), maxParticles(max), color(colorSet) {};
+		size(sizeSet), maxParticles(max), color(colorSet), numParticles(0), timeSinceAdding(0) {};
 	~BodySystem();
 	void addBody();
 	void integrate(float t);

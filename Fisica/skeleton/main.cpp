@@ -32,8 +32,6 @@ SceneManager* sceneMng;
 // Initialize physics engine
 void initPhysics(bool interactive)
 {
-	sceneMng = new SceneManager(0);
-
 	PX_UNUSED(interactive);
 
 	gFoundation = PxCreateFoundation(PX_FOUNDATION_VERSION, gAllocator, gErrorCallback);
@@ -55,6 +53,8 @@ void initPhysics(bool interactive)
 	sceneDesc.simulationEventCallback = &gContactReportCallback;
 	gScene = gPhysics->createScene(sceneDesc);
 	// ------------------------------------------------------
+	
+	sceneMng = new SceneManager(0, gScene, gPhysics);
 }
 
 
@@ -104,6 +104,9 @@ void keyPress(unsigned char key, const PxTransform& camera)
 	case '2': 
 		sceneMng->changeScene(2);
 		break;
+	case '3':
+		sceneMng->changeScene(3);
+		break;
 	default: 
 		sceneMng->keyPressed(key, camera);
 		break;
@@ -119,7 +122,7 @@ void onCollision(physx::PxActor* actor1, physx::PxActor* actor2)
 
 int main(int, const char* const*)
 {
-//_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF); // Check Memory Leaks
+_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF); // Check Memory Leaks
 #ifndef OFFLINE_EXECUTION 
 	extern void renderLoop();
 	renderLoop();

@@ -1,7 +1,9 @@
 #include "SceneManager.h"
 #include <iostream>
 
-SceneManager::SceneManager(int scene) {
+SceneManager::SceneManager(int scene, PxScene* gSce, PxPhysics* gPhy) {
+	gScene = gSce;
+	gPhysics = gPhy;
 	sceneSelector(scene);
 }
 
@@ -24,6 +26,8 @@ void SceneManager::sceneSelector(int scene) {
 	case 2:
 		actualScene = new BuoyancyScene();
 		break;
+	case 3:
+		actualScene = new RigidSolidScene(gPhysics, gScene);
 	default:
 		break;
 	}
@@ -50,6 +54,9 @@ void Scene::initForces() {
 	pForces[1] = new ParticleGravity(Vector3(0.0, -2.5, 0.0));
 	pForces[2] = new Wind(Vector3(-10.0, 8.0, 2.0), 50.0);
 	pForces[3] = new Explosion(Vector3(160.0, 160.0, 160.0), 80.0);
+	
+	bForces[0] = new BodyWind({ 0.0f, 0.0f, 0.0f });
+	bForces[1] = new BodyTorque({ 0.0f, 0.0f, 0.0f });
 }
 
 //--------------------------------------------------------------------
@@ -393,9 +400,13 @@ RigidSolidScene::RigidSolidScene(PxPhysics* _gPhysics, PxScene* _gScene) {
 	item = new RenderItem(shape, ground, { 0.6, 0.2, 1, 1 });
 	// sistema de sólidos rígidos
 	bodySys = new BodySystem(gPhysics, gScene, { 0, 40, 0 });
-	// generadores de fuerzas y torques
-	windforce = new BodyWind({ 0.0f, 0.0f, 0.0f });
-	torquegenerator = new BodyTorque({ 0.0f, 0.0f, 0.0f });
-	//registry
-	registry = new ParticleForceRegistry();
+}
+
+RigidSolidScene::~RigidSolidScene(){
+	delete bodySys;
+	bodySys = nullptr;
+}
+
+void RigidSolidScene::update(float t){
+	bodySys->integrate(t);
 }
