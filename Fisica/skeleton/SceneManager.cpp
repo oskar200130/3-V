@@ -396,7 +396,6 @@ RigidSolidScene::RigidSolidScene(PxPhysics* _gPhysics, PxScene* _gScene) {
 	PxRigidStatic* ground = gPhysics->createRigidStatic({ 0,0,0 });
 	ground->attachShape(*shape);
 	gScene->addActor(*ground);
-	RenderItem* item = nullptr;
 	item = new RenderItem(shape, ground, { 0.6, 0.2, 1, 1 });
 	// sistema de sólidos rígidos
 	bodySys = new BodySystem(gPhysics, gScene, { 0, 40, 0 });
@@ -405,6 +404,9 @@ RigidSolidScene::RigidSolidScene(PxPhysics* _gPhysics, PxScene* _gScene) {
 RigidSolidScene::~RigidSolidScene(){
 	delete bodySys;
 	bodySys = nullptr;
+	DeregisterRenderItem(item);
+	delete item;
+	item = nullptr;
 }
 
 void RigidSolidScene::update(float t){

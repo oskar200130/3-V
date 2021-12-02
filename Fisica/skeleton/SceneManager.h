@@ -75,6 +75,7 @@ public:
 private:
 	PxScene* gScene;
 	BodySystem* bodySys;
+	RenderItem* item = nullptr;
 protected:
 	virtual void update(float t);
 };
