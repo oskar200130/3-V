@@ -1,40 +1,74 @@
 #include "ParticleForce.h"
 
-void ParticleForceRegistry::add(Particle* particle, ParticleForceGenerator* fg) {
-	ParticleForceRegistration a;
-	a.particle = particle;
-	a.fg = fg;
-	registrations.push_back(a);
-}
-
-void ParticleForceRegistry::remove(Particle* particle, ParticleForceGenerator* fg) {
-	int i = 0;
-	for (auto a : registrations) {
-		if (a.particle == particle && a.fg == fg) {
-			registrations.erase(registrations.begin() + i);
-			return;
-		}
-		i++;
+void ParticleForceRegistry::add(Particle* particle, SolidBody* body, ParticleForceGenerator* fg, BodyForceGenerator* bf) {
+	if (particle != nullptr) {
+		ParticleForceRegistration a;
+		a.particle = particle;
+		a.fg = fg;
+		registrations.push_back(a);
+	}
+	else if (body != nullptr) {
+		BodyForceRegistration a;
+		a.body = body;
+		a.fg = bf;
+		registrations_rigid.push_back(a);
 	}
 }
 
-void ParticleForceRegistry::removePartInstance(Particle* particle) {
-	for (int i = 0; i < registrations.size(); ++i) {
-		if (registrations[i].particle == particle) {
-			registrations.erase(registrations.begin() + i);
-			i--;
+void ParticleForceRegistry::remove(Particle* particle, SolidBody* body, ParticleForceGenerator* fg, BodyForceGenerator* bf) {
+	int i = 0;
+	if (particle != nullptr) {
+		for (auto a : registrations) {
+			if (a.particle == particle && a.fg == fg) {
+				registrations.erase(registrations.begin() + i);
+				return;
+			}
+			i++;
+		}
+	}
+	else if (body != nullptr) {
+		for (auto a : registrations_rigid) {
+			if (a.body == body && a.fg == bf) {
+				registrations_rigid.erase(registrations_rigid.begin() + i);
+				return;
+			}
+			i++;
+		}
+	}
+}
+
+void ParticleForceRegistry::removePartInstance(Particle* particle, SolidBody* body) {
+	if (particle != nullptr) {
+		for (int i = 0; i < registrations.size(); ++i) {
+			if (registrations[i].particle == particle) {
+				registrations.erase(registrations.begin() + i);
+				i--;
+			}
+		}
+	}
+	else if (body != nullptr) {
+		for (int i = 0; i < registrations_rigid.size(); ++i) {
+			if (registrations_rigid[i].body == body) {
+				registrations_rigid.erase(registrations_rigid.begin() + i);
+				i--;
+			}
 		}
 	}
 }
 
 void ParticleForceRegistry::clear() {
 	registrations.clear();
+	registrations_rigid.clear();
 }
 
 void ParticleForceRegistry::updateForces(float t) {
 	for (auto it = registrations.begin(); it != registrations.end(); ++it)
 	{
 		it->fg->updateForce(it->particle, t);
+	}
+	for (auto it = registrations_rigid.begin(); it != registrations_rigid.end(); ++it)
+	{
+		it->fg->updateForce(it->body, t);
 	}
 }
 

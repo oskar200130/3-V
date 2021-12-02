@@ -32,9 +32,13 @@ public:
 		int max = 10, Vector4 colorSet = { 1, 0, 0, 1.0 }) : gPhysics(_gPhysics), gScene(_gScene), p(pSet), step(stepSet), colorR(_colorR), life(lifeSet),
 		size(sizeSet), maxParticles(max), color(colorSet), numParticles(0), timeSinceAdding(0) {};
 	~BodySystem();
-	void addBody();
+	SolidBody* addBody();
 	void integrate(float t);
 	vector<SolidBody*> bodies;
+	inline int getNumPar() { return numParticles; };
+	inline int getMaxPar() { return maxParticles; };
+	inline float getTimeSinceAdding() { return timeSinceAdding; };
+	inline float getStep() { return step; };
 private:
 	PxPhysics* gPhysics;
 	PxScene* gScene;

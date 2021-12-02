@@ -45,6 +45,8 @@ Scene::~Scene(){
 	delete forceReg;
 	for (auto f : pForces)
 		delete f;
+	for (auto f : bForces)
+		delete f;
 }
 
 void Scene::initForces() {
@@ -55,8 +57,9 @@ void Scene::initForces() {
 	pForces[2] = new Wind(Vector3(-10.0, 8.0, 2.0), 50.0);
 	pForces[3] = new Explosion(Vector3(160.0, 160.0, 160.0), 80.0);
 	
-	bForces[0] = new BodyWind({ 0.0f, 0.0f, 0.0f });
-	bForces[1] = new BodyTorque({ 0.0f, 0.0f, 0.0f });
+	bForces[0] = new BodyWind({ 0.0f, -100.0f, -100.0f });
+	bForces[1] = new BodyTorque({ 100.0f, 0.0f, 0.0f });
+	bForces[2] = new BodyExplosion(Vector3(1600.0, 1600.0, 1600.0), 15.0);
 }
 
 //--------------------------------------------------------------------
@@ -67,7 +70,7 @@ FireworkScene::FireworkScene() : Scene() {
 
 FireworkScene::~FireworkScene() {
 	for (FireWork* f : fireworks) {
-		forceReg->removePartInstance(*fireworks.begin());
+		forceReg->removePartInstance(*fireworks.begin(), nullptr);
 		delete* fireworks.begin();
 		fireworks.erase(fireworks.begin());
 	}
@@ -111,16 +114,16 @@ void FireworkScene::fireWorksUpdate(float t) {
 					newF->expAge = firework->expAge + 1;
 					rule->create(newF, { 0, 0, 0 }, firework);
 					add.push_back(newF);
-					forceReg->add(newF, pForces[0]);
-					forceReg->add(newF, pForces[2]);
-					forceReg->add(newF, pForces[3]);
+					forceReg->add(newF, nullptr, pForces[0], nullptr);
+					forceReg->add(newF, nullptr, pForces[2], nullptr);
+					forceReg->add(newF, nullptr, pForces[3], nullptr);
 				}
 			}
 		}
 	}
 	for (FireWork* f : fireworks) {
 		if (!f->isActive()) {
-			forceReg->removePartInstance(f);
+			forceReg->removePartInstance(f, nullptr);
 			delete f;
 			fireworks.erase(std::remove(fireworks.begin(), fireworks.end(), f), fireworks.end());
 		}
@@ -151,9 +154,9 @@ void FireworkScene::keyPressed(unsigned char key, const PxTransform& camera)
 		PxTransform pos = GetCamera()->getTransform();
 		rules[3]->create(f, pos.p);
 		fireworks.push_back(f);
-		forceReg->add(f, pForces[0]);
-		forceReg->add(f, pForces[2]);
-		forceReg->add(f, pForces[3]);
+		forceReg->add(f, nullptr, pForces[0], nullptr);
+		forceReg->add(f, nullptr, pForces[2], nullptr);
+		forceReg->add(f, nullptr, pForces[3], nullptr);
 		break;
 	}
 	case 'M': {
@@ -161,18 +164,18 @@ void FireworkScene::keyPressed(unsigned char key, const PxTransform& camera)
 		PxTransform pos = GetCamera()->getTransform();
 		rules[3]->create(f, pos.p);
 		fireworks.push_back(f);
-		forceReg->add(f, pForces[1]);
-		forceReg->add(f, pForces[2]);
-		forceReg->add(f, pForces[3]);
+		forceReg->add(f, nullptr, pForces[1], nullptr);
+		forceReg->add(f, nullptr, pForces[2], nullptr);
+		forceReg->add(f, nullptr, pForces[3], nullptr);
 		break;
 	}
 	case 'C': {
 		FireWork* f = new FireWork(FireWorkType::explosion);
 		rules[0]->create(f, position);
 		fireworks.push_back(f);
-		forceReg->add(f, pForces[0]);
-		forceReg->add(f, pForces[2]);
-		forceReg->add(f, pForces[3]);
+		forceReg->add(f, nullptr, pForces[0], nullptr);
+		forceReg->add(f, nullptr, pForces[2], nullptr);
+		forceReg->add(f, nullptr, pForces[3], nullptr);
 		break;
 	}
 	case 'V': {
@@ -181,9 +184,9 @@ void FireworkScene::keyPressed(unsigned char key, const PxTransform& camera)
 		position.z += 200;
 		rules[1]->create(f, position);
 		fireworks.push_back(f);
-		forceReg->add(f, pForces[0]);
-		forceReg->add(f, pForces[2]);
-		forceReg->add(f, pForces[3]);
+		forceReg->add(f, nullptr, pForces[0], nullptr);
+		forceReg->add(f, nullptr, pForces[2], nullptr);
+		forceReg->add(f, nullptr, pForces[3], nullptr);
 		break;
 	}
 	case 'B': {
@@ -193,9 +196,9 @@ void FireworkScene::keyPressed(unsigned char key, const PxTransform& camera)
 		position.z -= 300;
 		rules[2]->create(f, position);
 		fireworks.push_back(f);
-		forceReg->add(f, pForces[0]);
-		forceReg->add(f, pForces[2]);
-		forceReg->add(f, pForces[3]);
+		forceReg->add(f, nullptr, pForces[0], nullptr);
+		forceReg->add(f, nullptr, pForces[2], nullptr);
+		forceReg->add(f, nullptr, pForces[3], nullptr);
 		break;
 	}
 	case 'E':
@@ -227,14 +230,14 @@ SpringScene::SpringScene() : Scene() {
 
 	p2 = new Particle();
 	p2->init(Vector3(-60, 10, -60), Vector3(0, 0, 0), Vector3(0, 0, 0), Vector4(1, 0, 0, 1), 0.5);
-	forceReg->add(p2, pForces[0]);
-	forceReg->add(p2, pForces[3]);
+	forceReg->add(p2, nullptr, pForces[0], nullptr);
+	forceReg->add(p2, nullptr, pForces[3], nullptr);
 
 	sp1 = new ParticleSpring(p2, k, 30.0f);
-	forceReg->add(p1, sp1);
+	forceReg->add(p1, nullptr, sp1, nullptr);
 
 	sp2 = new ParticleSpring(p1, k, 30.0f);
-	forceReg->add(p2, sp2);
+	forceReg->add(p2, nullptr, sp2, nullptr);
 }
 
 SpringScene::~SpringScene() {
@@ -303,34 +306,34 @@ void SpringScene::changeAnchor() {
 		p1->init(Vector3(-60, 60, -60), Vector3(0, 0, 0), Vector3(0, 0, 0), Vector4(1, 0, 0, 1), 0.5, 0);
 	else {
 		p1->init(Vector3(-80, 10, -50), Vector3(0, 0, 0), Vector3(0, 0, 0), Vector4(1, 0, 0, 1), 0.5);
-		forceReg->add(p1, pForces[0]);
-		forceReg->add(p1, pForces[3]);
+		forceReg->add(p1, nullptr, pForces[0], nullptr);
+		forceReg->add(p1, nullptr, pForces[3], nullptr);
 	}
 
 	p2 = new Particle();
 	p2->init(Vector3(-60, 10, -60), Vector3(0, 0, 0), Vector3(0, 0, 0), Vector4(1, 0, 0, 1), 0.5);
-	forceReg->add(p2, pForces[0]);
-	forceReg->add(p1, pForces[3]);
+	forceReg->add(p2, nullptr, pForces[0], nullptr);
+	forceReg->add(p1, nullptr, pForces[3], nullptr);
 
 	sp1 = new ParticleSpring(p2, k + 0.1, 30.0f);
-	forceReg->add(p1, sp1);
+	forceReg->add(p1, nullptr, sp1, nullptr);
 
 	sp2 = new ParticleSpring(p1, k + 0.1, 30.0f);
-	forceReg->add(p2, sp2);
+	forceReg->add(p2, nullptr, sp2, nullptr);
 }
 
 //--------------------------------------------------------------------
 
 BuoyancyScene::BuoyancyScene() : Scene() {
-	vol = 0.03;
-	mass = 20;
+	vol = 0.3;
+	mass = 5;
 
 	p = new Particle();
 	p->init(Vector3(-60, 60, -60), Vector3(0, 0, 0), Vector3(0, 0, 0), Vector4(1, 0, 0, 1), 0.5, mass, 10, true);
-	forceReg->add(p, pForces[0]);
+	forceReg->add(p, nullptr, pForces[0], nullptr);
 
 	by = new ParticleBuoyancy(10, vol, 10);
-	forceReg->add(p, by);
+	forceReg->add(p, nullptr, by, nullptr);
 
 	floor = new Particle();
 	floor->init(Vector3(-60, 10, -60), Vector3(0, 0, 0), Vector3(0, 0, 0), Vector4(0, 0.02, 1, 0.3), 0.85, 0, 2.0, true, Vector3(50, 0.2, 50));
@@ -366,16 +369,16 @@ void BuoyancyScene::keyPressed(unsigned char key, const PxTransform& camera) {
 	}
 	case 'P':
 	{
-		if (vol < 0.08) {
-			vol += 0.01;
+		if (vol < 0.8) {
+			vol += 0.1;
 			by->changeVol(vol);
 		}
 		break;
 	}
 	case 'L':
 	{
-		if (vol > 0.01) {
-			vol -= 0.01;
+		if (vol > 0.1) {
+			vol -= 0.1;
 			by->changeVol(vol);
 		}
 		break;
@@ -410,5 +413,65 @@ RigidSolidScene::~RigidSolidScene(){
 }
 
 void RigidSolidScene::update(float t){
+	FireworkScene::update(t);
 	bodySys->integrate(t);
+
+	for (SolidBody* f : bodySys->bodies) {
+		if (!f->active) {
+			forceReg->removePartInstance(nullptr, f);
+			delete* bodySys->bodies.begin();
+			bodySys->bodies.erase(std::remove(bodySys->bodies.begin(), bodySys->bodies.end(), f), bodySys->bodies.end());
+		}
+	}
+
+	if (bodySys->getNumPar() < bodySys->getMaxPar() && bodySys->getTimeSinceAdding() > bodySys->getStep()) {
+		auto a = bodySys->addBody();
+		forceReg->add(nullptr, a, nullptr, bForces[0]);
+		forceReg->add(nullptr, a, nullptr, bForces[1]);
+		forceReg->add(nullptr, a, nullptr, bForces[2]);
+	}
+
+
+	static_cast<BodyExplosion*>(bForces[2])->update(t);
+}
+
+void RigidSolidScene::keyPressed(unsigned char key, const PxTransform& camera){
+	switch (toupper(key))
+	{
+	case 'M': {
+		FireWork* f = new FireWork(FireWorkType::particle);
+		PxTransform pos = GetCamera()->getTransform();
+		rules[3]->create(f, pos.p);
+		fireworks.push_back(f);
+		forceReg->add(f, nullptr, pForces[1], nullptr);
+		forceReg->add(f, nullptr, pForces[2], nullptr);
+		forceReg->add(f, nullptr, pForces[3], nullptr);
+		break;
+	}
+	case 'E':
+	{
+		static_cast<BodyTorque*>(bForces[1])->activateTorque();
+		break;
+	}
+	case 'R':
+	{
+		static_cast<BodyTorque*>(bForces[1])->deactivateTorque();
+		break;
+	}
+	case 'F':
+	{
+		static_cast<BodyWind*>(bForces[0])->activateBodWind();
+		break;
+	}
+	case 'G':
+	{
+		static_cast<BodyWind*>(bForces[0])->deactivateBodWind();
+		break;
+	}
+	case 'T':
+	{
+		static_cast<BodyExplosion*>(bForces[2])->activateExplosion();
+		break;
+	}
+	}
 }

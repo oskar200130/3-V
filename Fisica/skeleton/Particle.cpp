@@ -113,7 +113,7 @@ void FireWorkRule::configType(FireWork* fir, Vector3& vel, float& size, Vector4&
 	case FireWorkType::particle:
 		color = { 1,0,1,1 };
 		size = fir->expAge + 2.0f;
-		vel = GetCamera()->getDir() * 100;
+		vel = GetCamera()->getDir() * 150;
 	}
 }
 

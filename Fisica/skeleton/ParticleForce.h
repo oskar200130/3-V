@@ -35,10 +35,10 @@ protected:
 	Registry_rigid registrations_rigid;
 public:
 	// Associate generator with a particle
-	void add(Particle* particle, ParticleForceGenerator* fg);
+	void add(Particle* particle, SolidBody* body, ParticleForceGenerator* fg, BodyForceGenerator* bf);
 	// Remove association
-	void remove(Particle* particle, ParticleForceGenerator* fg);
-	void removePartInstance(Particle* particle);
+	void remove(Particle* particle, SolidBody* body, ParticleForceGenerator* fg, BodyForceGenerator* bf);
+	void removePartInstance(Particle* particle, SolidBody* body);
 	// Removes all associations. Particle and Generators won't be deleted
 	void clear();
 	// Update all the generators in the registry

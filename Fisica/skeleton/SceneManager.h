@@ -7,10 +7,11 @@ public:
 	virtual ~Scene();
 	virtual void update(float t) { forceReg->updateForces(t); };
 	virtual void keyPressed(unsigned char key, const PxTransform& camera) {};
+	inline void removePartinst(Particle* par, SolidBody* bo) { forceReg->removePartInstance(par, bo); };
 protected:
 	ParticleForceRegistry* forceReg;
 	ParticleForceGenerator* pForces[4];
-	BodyForceGenerator* bForces[2];
+	BodyForceGenerator* bForces[3];
 
 	void initForces();
 };
@@ -67,7 +68,7 @@ protected:
 };
 //-------------------------------------------------------
 
-class RigidSolidScene : public Scene {
+class RigidSolidScene : public FireworkScene {
 public:
 	RigidSolidScene(PxPhysics* _gPhysics, PxScene* _gScene);
 	virtual ~RigidSolidScene();
@@ -78,6 +79,7 @@ private:
 	RenderItem* item = nullptr;
 protected:
 	virtual void update(float t);
+	void keyPressed(unsigned char key, const PxTransform& camera);
 };
 //-------------------------------------------------------
 
