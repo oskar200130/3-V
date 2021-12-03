@@ -29,7 +29,7 @@ SolidBody* BodySystem::addBody() {
 	rigid->setAngularDamping(0.05);
 	//Dinámica
 	rigid->setMass(4);
-	rigid->setMassSpaceInertiaTensor(PxVec3(0.f, 0.0f, 1.0f));
+	rigid->setMassSpaceInertiaTensor(PxVec3(1.0f, 1.0f, 1.0f));
 	gScene->addActor(*rigid);
 	// complete body struct
 	body->rigid = rigid;

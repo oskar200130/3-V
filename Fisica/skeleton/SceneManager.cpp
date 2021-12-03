@@ -59,7 +59,7 @@ void Scene::initForces() {
 	
 	bForces[0] = new BodyWind({ 0.0f, -100.0f, -100.0f });
 	bForces[1] = new BodyTorque({ 100.0f, 0.0f, 0.0f });
-	bForces[2] = new BodyExplosion(Vector3(1600.0, 1600.0, 1600.0), 15.0);
+	bForces[2] = new BodyExplosion(Vector3(500.0, 500.0, 500.0), 15.0);
 }
 
 //--------------------------------------------------------------------

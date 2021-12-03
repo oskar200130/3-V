@@ -61,7 +61,8 @@ void BodyTorque::deactivateTorque() {
 void BodyExplosion::updateForce(SolidBody* particle, float t) {
 	if (activated && (particle->rigid->getGlobalPose().p - renderItem->transform->p).magnitude() < radius) {
 		Vector3 force = (particle->rigid->getGlobalPose().p - renderItem->transform->p).getNormalized() * g.magnitude();
-		particle->force += g;
+		particle->force += force;
+		particle->torque += force;
 	}
 }
 
