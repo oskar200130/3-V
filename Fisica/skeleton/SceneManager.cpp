@@ -1,4 +1,5 @@
 #include "SceneManager.h"
+#include "FinalScene.h"
 #include <iostream>
 
 SceneManager::SceneManager(int scene, PxScene* gSce, PxPhysics* gPhy) {
@@ -28,6 +29,9 @@ void SceneManager::sceneSelector(int scene) {
 		break;
 	case 3:
 		actualScene = new RigidSolidScene(gPhysics, gScene);
+		break;
+	case 4:
+		actualScene = new FinalScene(gPhysics, gScene);
 	default:
 		break;
 	}

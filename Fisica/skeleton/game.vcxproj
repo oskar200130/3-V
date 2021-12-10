@@ -255,6 +255,7 @@
   <ItemGroup>
     <ClCompile Include="BodyForce.cpp" />
     <ClCompile Include="callbacks.cpp" />
+    <ClCompile Include="FinalScene.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Particle.cpp" />
     <ClCompile Include="ParticleForce.cpp" />
@@ -269,6 +270,7 @@
     <ClInclude Include="callbacks.hpp" />
     <ClInclude Include="CheckML.h" />
     <ClInclude Include="core.hpp" />
+    <ClInclude Include="FinalScene.h" />
     <ClInclude Include="Particle.h" />
     <ClInclude Include="ParticleForce.h" />
     <ClInclude Include="RenderUtils.hpp" />

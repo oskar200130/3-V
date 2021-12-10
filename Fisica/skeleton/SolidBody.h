@@ -52,3 +52,16 @@ private:
 	float life;
 	float timeSinceAdding;
 };
+
+//----------------------------------------------------------------------
+
+class SoloBodySystem {
+public:
+	SoloBodySystem(PxPhysics* _gPhysics, PxScene* _gScene) : gPhysics(_gPhysics), gScene(_gScene), body(new SolidBody) {};
+	~SoloBodySystem();
+	void integrate(float t);
+	SolidBody* body;
+private:
+	PxPhysics* gPhysics;
+	PxScene* gScene;
+};

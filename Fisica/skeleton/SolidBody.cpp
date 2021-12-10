@@ -63,3 +63,16 @@ SolidBody::~SolidBody(){
 	delete renderItem;
 	renderItem = nullptr;
 }
+
+//---------------------------------------------------------------------------------
+
+SoloBodySystem::~SoloBodySystem(){
+
+}
+
+void SoloBodySystem::integrate(float t) {
+	body->rigid->addForce(body->force, PxForceMode::eFORCE);
+	body->force = { 0.0f, 0.0f, 0.0f };
+	body->rigid->addTorque(body->torque);
+	body->torque = { 0.0f, 0.0f, 0.0f };
+}

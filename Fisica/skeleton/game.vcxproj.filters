@@ -15,6 +15,7 @@
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="SolidBody.cpp" />
     <ClCompile Include="BodyForce.cpp" />
+    <ClCompile Include="FinalScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core.hpp" />
@@ -32,6 +33,7 @@
     <ClInclude Include="CheckML.h" />
     <ClInclude Include="SolidBody.h" />
     <ClInclude Include="BodyForce.h" />
+    <ClInclude Include="FinalScene.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Render">

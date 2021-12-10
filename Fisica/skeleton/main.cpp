@@ -107,6 +107,9 @@ void keyPress(unsigned char key, const PxTransform& camera)
 	case '3':
 		sceneMng->changeScene(3);
 		break;
+	case '4':
+		sceneMng->changeScene(4);
+		break;
 	default: 
 		sceneMng->keyPressed(key, camera);
 		break;
