@@ -73,7 +73,7 @@ void FireWorkRule::configType(FireWork* fir, Vector3& vel, float& size, Vector4&
 		x = (rand() % 101 / 100.0);
 
 		color = Vector4(x, x, x, 1);
-		size = fir->expAge + 1.0f;
+		size = fir->expAge*4 + 1.0f;
 
 		vel += Vector3((rand() % (int)(maxVelocity.x - minVelocity.x) + minVelocity.x) / 10.0f, (rand() % (int)(maxVelocity.y - minVelocity.y) + minVelocity.y) / 10.0f,
 			(rand() % (int)(maxVelocity.z - minVelocity.z) + minVelocity.z) / 10.0f);
@@ -129,5 +129,5 @@ void FireWorkRule::create(FireWork* fir, Vector3 pos, const FireWork* parent) {
 
 	float s = 0.0;
 	configType(fir, vel, s, color);
-	fir->init(pos, vel, { 0, 0, 0 }, color, damping, 10, 3.0f / s);
+	fir->init(pos, vel, { 0, 0, 0 }, color, damping, 10, 1.0f / s);
 }

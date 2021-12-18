@@ -9,10 +9,8 @@ SceneManager::SceneManager(int scene, PxScene* gSce, PxPhysics* gPhy) {
 }
 
 void SceneManager::changeScene(int scene) {
-	if (scene != numScene) {
-		delete actualScene;
-		sceneSelector(scene);
-	}
+	delete actualScene;
+	sceneSelector(scene);
 }
 
 void SceneManager::sceneSelector(int scene) {
@@ -44,7 +42,7 @@ SceneManager::~SceneManager() {
 
 //--------------------------------------------------------------------
 
-Scene::~Scene(){
+Scene::~Scene() {
 	forceReg->clear();
 	delete forceReg;
 	for (auto f : pForces)
@@ -60,10 +58,11 @@ void Scene::initForces() {
 	pForces[1] = new ParticleGravity(Vector3(0.0, -2.5, 0.0));
 	pForces[2] = new Wind(Vector3(-10.0, 8.0, 2.0), 50.0);
 	pForces[3] = new Explosion(Vector3(160.0, 160.0, 160.0), 80.0);
-	
-	bForces[0] = new BodyWind({ 0.0f, -100.0f, -100.0f });
+
+	bForces[0] = new BodyWind({ 0.0f, 0.0f, 1000.0f });
 	bForces[1] = new BodyTorque({ 100.0f, 0.0f, 0.0f });
-	bForces[2] = new BodyExplosion(Vector3(500.0, 500.0, 500.0), 15.0);
+	bForces[2] = new BodyExplosion(Vector3(2200.0, 2200.0, 2200.0), 10.0);
+	bForces[3] = new BodyWind(Vector3(0.0, 0.0, 1.0), 5000);
 }
 
 //--------------------------------------------------------------------
@@ -85,7 +84,7 @@ FireworkScene::~FireworkScene() {
 
 void FireworkScene::initFireworkRules() {
 	rules[0] = new FireWorkRule();
-	rules[0]->setParameters(FireWorkType::explosion, 1.3, 2.7, Vector3(-1, 6, -1), Vector3(-9, 9, -8), 0.999);
+	rules[0]->setParameters(FireWorkType::explosion, 0.3, 1.2, Vector3(-4, 0, -4), Vector3(4, 1, 4), 0.999);
 	for (int i = 0; i < 15; i++)
 		rules[0]->payloads.push_back(Payload(FireWorkType::explosion, 3));
 
@@ -118,7 +117,7 @@ void FireworkScene::fireWorksUpdate(float t) {
 					newF->expAge = firework->expAge + 1;
 					rule->create(newF, { 0, 0, 0 }, firework);
 					add.push_back(newF);
-					forceReg->add(newF, nullptr, pForces[0], nullptr);
+					//forceReg->add(newF, nullptr, pForces[0], nullptr);
 					forceReg->add(newF, nullptr, pForces[2], nullptr);
 					forceReg->add(newF, nullptr, pForces[3], nullptr);
 				}
@@ -408,7 +407,7 @@ RigidSolidScene::RigidSolidScene(PxPhysics* _gPhysics, PxScene* _gScene) {
 	bodySys = new BodySystem(gPhysics, gScene, { 0, 40, 0 });
 }
 
-RigidSolidScene::~RigidSolidScene(){
+RigidSolidScene::~RigidSolidScene() {
 	delete bodySys;
 	bodySys = nullptr;
 	DeregisterRenderItem(item);
@@ -416,7 +415,7 @@ RigidSolidScene::~RigidSolidScene(){
 	item = nullptr;
 }
 
-void RigidSolidScene::update(float t){
+void RigidSolidScene::update(float t) {
 	FireworkScene::update(t);
 	bodySys->integrate(t);
 
@@ -429,7 +428,7 @@ void RigidSolidScene::update(float t){
 	}
 
 	if (bodySys->getNumPar() < bodySys->getMaxPar() && bodySys->getTimeSinceAdding() > bodySys->getStep()) {
-		auto a = bodySys->addBody();
+		auto a = bodySys->addBody(PxTransform());
 		forceReg->add(nullptr, a, nullptr, bForces[0]);
 		forceReg->add(nullptr, a, nullptr, bForces[1]);
 		forceReg->add(nullptr, a, nullptr, bForces[2]);
@@ -439,7 +438,7 @@ void RigidSolidScene::update(float t){
 	static_cast<BodyExplosion*>(bForces[2])->update(t);
 }
 
-void RigidSolidScene::keyPressed(unsigned char key, const PxTransform& camera){
+void RigidSolidScene::keyPressed(unsigned char key, const PxTransform& camera) {
 	switch (toupper(key))
 	{
 	case 'M': {
@@ -464,7 +463,7 @@ void RigidSolidScene::keyPressed(unsigned char key, const PxTransform& camera){
 	}
 	case 'F':
 	{
-		static_cast<BodyWind*>(bForces[0])->activateBodWind();
+		static_cast<BodyWind*>(bForces[0])->activateBodWind(Vector3(0, 15, 0));
 		break;
 	}
 	case 'G':

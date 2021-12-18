@@ -6,11 +6,11 @@ void BodyWind::updateForce(SolidBody* particle, float t) {
 	}
 }
 
-void BodyWind::activateBodWind() {
+void BodyWind::activateBodWind(Vector3 p) {
 	if (!activated) {
 		pos = new PxTransform(0, 0, 0);
 
-		pos->p = { 0, 15, 0 };
+		pos->p = p;
 
 		Vector4 color = { 0.0, 1.0, 0.0, 0.0 };
 		renderItem = new RenderItem(CreateShape(PxSphereGeometry(radius)), pos, color);
@@ -76,11 +76,14 @@ void BodyExplosion::update(float t) {
 	}
 }
 
-void BodyExplosion::activateExplosion() {
+void BodyExplosion::activateExplosion(Vector3 po) {
 	if (!activated) {
 		pos = new PxTransform(0, 0, 0);
 
-		pos->p = { 0,15.0,0 };
+		if (po != Vector3(-78, -9, 31))
+			pos->p = po;
+		else 
+			pos->p = { 0,15.0,0 };
 
 		Vector4 color = { 1.0, 0.0, 0.0, 0.0 };
 		renderItem = new RenderItem(CreateShape(PxSphereGeometry(radius)), pos, color);
@@ -96,4 +99,26 @@ void BodyExplosion::deactivateExplosion() {
 		renderItem = nullptr;
 		activated = false;
 	}
+}
+
+//-------------------------------------------------------------------------------------------
+
+void BodyBuoyancy::updateForce(SolidBody* particle, float t) {
+	float depth;
+	depth = particle->rigid->getGlobalPose().p.y;
+	Vector3 f(0.0f, 0.0f, 0.0f);
+
+	if (depth > (waterHeight + maxDepth)) {
+		return;
+	}
+
+	if (depth < (waterHeight - maxDepth)) {
+		f.y = liquidDensity * volume;
+	}
+	else {
+		float depthExt = waterHeight + maxDepth;
+		float volFactor = (depthExt - depth) / (2 * maxDepth);
+		f.y = liquidDensity * volume * volFactor;
+	}
+	particle->force.y = f.y;
 }

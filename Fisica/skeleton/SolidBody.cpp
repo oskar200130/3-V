@@ -1,7 +1,7 @@
 #include "SolidBody.h"
 #include "SceneManager.h"
 
-BodySystem::~BodySystem(){
+BodySystem::~BodySystem() {
 	for (int i = bodies.size() - 1; i >= 0; i--) {
 		delete bodies.at(i);
 		bodies.erase(bodies.begin() + i);
@@ -10,27 +10,41 @@ BodySystem::~BodySystem(){
 	gScene = nullptr;
 }
 
-SolidBody* BodySystem::addBody() {
+SolidBody* BodySystem::addBody(PxTransform pos, bool posP, bool velR, Vector3 vel, Vector3 dim) {
 	if (colorR) {
-		color = Vector4(float((rand() % 10) / 10.0), float((rand() % 10) / 10.0), float((rand() % 10) / 10.0), 1.0);
+		color = Vector4(1.0, 0.0, 0.0, 1.0);
 	}
-	SolidBody* body = nullptr;
+	SolidBody* body;
 	body = new SolidBody;
 	//rigid
+	if (posP)
+		p = pos;
+
 	PxRigidDynamic* rigid = gPhysics->createRigidDynamic(p);
+
 	// shape
-	PxShape* shape = CreateShape(PxBoxGeometry(size, size, size));
+	PxShape* shape;
+	if (dim.x > 0)
+		shape = CreateShape(PxBoxGeometry(dim.x, dim.y, dim.z));
+	else {
+		float x = (rand() % 9 + 1);
+		shape = CreateShape(PxBoxGeometry(PxVec3(x, x, x)));
+	}
 	rigid->attachShape(*shape);
+
 	//Cinetica
-	Vector3 vel = { -5.0f + rand() / (RAND_MAX / (10.0f)), -5.0f + rand() / (RAND_MAX / (10.0f)), -5.0f + rand() / (RAND_MAX / (10.0f)) };
+	if (velR)
+		vel = { 0, 0, 0 };
 	rigid->setLinearVelocity(vel);
-	rigid->setLinearDamping(0.1);
-	rigid->setAngularVelocity({ 0,2,0 });
+	rigid->setLinearDamping(0.0);
+	rigid->setAngularVelocity({ 0,0,0 });
 	rigid->setAngularDamping(0.05);
-	//Dinámica
-	rigid->setMass(4);
-	rigid->setMassSpaceInertiaTensor(PxVec3(1.0f, 1.0f, 1.0f));
+
+	//Dinï¿½mica
+	rigid->setMass(rand() % 50);
+	rigid->setMassSpaceInertiaTensor(PxVec3(rand() % 6, rand() % 6, rand() % 6));
 	gScene->addActor(*rigid);
+
 	// complete body struct
 	body->rigid = rigid;
 	body->life = life;
@@ -51,14 +65,14 @@ void BodySystem::integrate(float t) {
 		bodies.at(i)->rigid->addTorque(bodies.at(i)->torque);
 		bodies.at(i)->torque = { 0.0f, 0.0f, 0.0f };
 		bodies.at(i)->life -= t;
-		if (bodies.at(i)->life < 0) {
+		if (bodies.at(i)->life != -8 && bodies.at(i)->life < 0) {
 			bodies.at(i)->active = false;
 			numParticles--;
 		}
 	}
 }
 
-SolidBody::~SolidBody(){
+SolidBody::~SolidBody() {
 	DeregisterRenderItem(renderItem);
 	delete renderItem;
 	renderItem = nullptr;
@@ -66,11 +80,15 @@ SolidBody::~SolidBody(){
 
 //---------------------------------------------------------------------------------
 
-SoloBodySystem::~SoloBodySystem(){
-
+SoloBodySystem::~SoloBodySystem() {
+	delete body;
+	body = nullptr;
+	gPhysics = nullptr;
+	gScene = nullptr;
 }
 
 void SoloBodySystem::integrate(float t) {
+	body->rigid->setLinearVelocity(body->vel + body->rigid->getLinearVelocity());
 	body->rigid->addForce(body->force, PxForceMode::eFORCE);
 	body->force = { 0.0f, 0.0f, 0.0f };
 	body->rigid->addTorque(body->torque);

@@ -32,7 +32,7 @@ public:
 		int max = 10, Vector4 colorSet = { 1, 0, 0, 1.0 }) : gPhysics(_gPhysics), gScene(_gScene), p(pSet), step(stepSet), colorR(_colorR), life(lifeSet),
 		size(sizeSet), maxParticles(max), color(colorSet), numParticles(0), timeSinceAdding(0) {};
 	~BodySystem();
-	SolidBody* addBody();
+	SolidBody* addBody(PxTransform pos, bool posP = false, bool velR = true, Vector3 vel = { 0,0,0 }, Vector3 dim = { 0,0,0 });
 	void integrate(float t);
 	vector<SolidBody*> bodies;
 	inline int getNumPar() { return numParticles; };

@@ -8,10 +8,11 @@ public:
 	virtual void update(float t) { forceReg->updateForces(t); };
 	virtual void keyPressed(unsigned char key, const PxTransform& camera) {};
 	inline void removePartinst(Particle* par, SolidBody* bo) { forceReg->removePartInstance(par, bo); };
+	bool reset = false;
 protected:
 	ParticleForceRegistry* forceReg;
 	ParticleForceGenerator* pForces[4];
-	BodyForceGenerator* bForces[3];
+	BodyForceGenerator* bForces[4];
 
 	void initForces();
 };
@@ -86,14 +87,15 @@ protected:
 class SceneManager {
 private:
 	Scene* actualScene;
-	int numScene;
 	PxScene* gScene = NULL;
 	PxPhysics* gPhysics = NULL;
 public:
+	int numScene;
 	SceneManager(int scene, PxScene* gSce, PxPhysics* gPhy);
 	void changeScene(int scene);
 	void sceneSelector(int scene);
 	~SceneManager();
 	void update(float t) { actualScene->update(t); };
 	void keyPressed(unsigned char key, const PxTransform& camera) { actualScene->keyPressed(key, camera); };
+	inline bool isToReset() { return actualScene->reset; };
 };
